@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Xml.Serialization;
+using PuzzleGraphGenerator.Interfaces;
 
 namespace PuzzleGraphGenerator.Models
 {
-    [XmlType(TypeName = "attribute")]
+    [XmlType(TypeName = "attribute", Namespace = "Attribute")]
     [Serializable]
-    public class Attribute
+    public class Attribute : IGraphObject
     {
         [XmlAttribute("key")]
         public string Key { get; set; } = string.Empty;
@@ -23,7 +24,7 @@ namespace PuzzleGraphGenerator.Models
             {
                 Key = key,
                 Type = type,
-                Value = value != null ? value.ToString() : null
+                Value = value?.ToString()
             };
         }
     }

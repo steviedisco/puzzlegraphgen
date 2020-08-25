@@ -1,22 +1,26 @@
-﻿using System;
+﻿using PuzzleGraphGenerator.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
 
 namespace PuzzleGraphGenerator.Models
 {
-    [XmlType(TypeName = "section")]
+    [XmlInclude(typeof(GraphContainer))]
+    [XmlInclude(typeof(Graph))]
+    [XmlInclude(typeof(Node))]
+    [XmlType(TypeName = "section", Namespace = "Section" )]
     [Serializable]
-    public class Section
+    public class Section : IGraphObject
     {
-        private List<object> Nodes { get; set; } = new List<object>();
+        private List<IGraphObject> Nodes { get; set; } = new List<IGraphObject>();
 
         [XmlElement("attribute")]
         public List<Attribute> Attributes
         {
             get
             {
-                return Nodes.Where(x => x.GetType() == typeof(Attribute))
+                return Nodes.Where(x => x is Attribute)
                             .Select(x => x as Attribute).ToList();
             }
         }
@@ -26,7 +30,7 @@ namespace PuzzleGraphGenerator.Models
         {
             get
             {
-                return Nodes.Where(x => x.GetType() == typeof(Section))
+                return Nodes.Where(x => x is Section)
                             .Select(x => x as Section).ToList();
             }
         }
@@ -34,16 +38,10 @@ namespace PuzzleGraphGenerator.Models
         [XmlAttribute("name")]
         public string Name { get; set; } = string.Empty;
 
-        public Section AddSection(Section section)
+        public IGraphObject AddGraphObject(IGraphObject graphObject)
         {
-            Nodes.Add(section);
-            return section;
-        }
-
-        public Attribute AddAttribute(Attribute attribute)
-        {
-            Nodes.Add(attribute);
-            return attribute;
+            Nodes.Add(graphObject);
+            return graphObject;
         }
 
         public static Section CreateSection(string name)

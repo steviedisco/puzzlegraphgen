@@ -3,21 +3,17 @@ using System.Xml.Serialization;
 
 namespace PuzzleGraphGenerator.Models
 {
-    [XmlRoot("section")]
+    [XmlType(TypeName = "section", Namespace = "Node")]
     [Serializable]
     public class Node : Section
     {
         public Node()
         {
-            Name = "xgml";
+            Name = "node";
 
-            AddAttribute(Attribute.CreateAttribute("Creator", "String", "yFiles"));
-            AddAttribute(Attribute.CreateAttribute("Version", "String", 2.17));
-
-            var section = AddSection(Section.CreateSection("graph"));
-            section.AddAttribute(Attribute.CreateAttribute("hierarchic", "int", 1));
-            section.AddAttribute(Attribute.CreateAttribute("label", "String", ""));
-            section.AddAttribute(Attribute.CreateAttribute("directed", "int", 1));
+            var section = AddGraphObject(Section.CreateSection("node")) as Section;
+            section.AddGraphObject(Attribute.CreateAttribute("id", "int", 0));
+            section.AddGraphObject(Attribute.CreateAttribute("label", "String", "Finish"));
         }
     }
 }
