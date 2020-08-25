@@ -1,6 +1,5 @@
 ﻿using PuzzleGraphGenerator.Models;
 using System;
-using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -12,14 +11,14 @@ namespace PuzzleGraphGenerator
     {
         static void Main(string[] args)
         {
-            var node = CreateSingleNode();
+            var node = new Graph(); // CreateSingleNode();
             var serializer = new XmlSerializer(node.GetType());
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             var settings = new XmlWriterSettings();
             settings.Indent = true;
-            settings.IndentChars = ("    ");
+            settings.IndentChars = "    ";
             settings.Encoding = CodePagesEncodingProvider.Instance.GetEncoding(1252);
 
             var writer = XmlWriter.Create("./output.xgml", settings);
