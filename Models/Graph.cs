@@ -7,7 +7,7 @@ namespace PuzzleGraphGenerator.Models
     [Serializable]
     public class Graph : Section
     {
-        public Graph()
+        private Graph()
         {
             Name = "graph";
 
@@ -19,6 +19,16 @@ namespace PuzzleGraphGenerator.Models
         public static Graph CreateGraph()
         {
             return new Graph();
+        }
+
+        public Node AddNode(int id, string label)
+        {
+            return AddGraphObject(Node.CreateNode(id, label)) as Node;
+        }
+
+        public Edge AddEdge(int source, int target)
+        {
+            return AddGraphObject(Edge.CreateEdge(source, target)) as Edge;
         }
     }
 }

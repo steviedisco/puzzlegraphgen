@@ -7,13 +7,35 @@ namespace PuzzleGraphGenerator.Models
     [Serializable]
     public class Node : Section
     {
-        public Node()
+        private Node()
+        {
+        }
+
+        private Node(int id, string label)
         {
             Name = "node";
 
-            var section = AddGraphObject(Section.CreateSection("node")) as Section;
-            section.AddGraphObject(Attribute.CreateAttribute("id", "int", 0));
-            section.AddGraphObject(Attribute.CreateAttribute("label", "String", "Finish"));
+            AddGraphObject(Attribute.CreateAttribute("id", "int", id));
+            AddGraphObject(Attribute.CreateAttribute("label", "String", label));
+        }
+
+        public static Node CreateNode(int id, string label)
+        {
+            return new Node(id, label);
+        }
+
+        public Node AddGraphics(double x, double y)
+        {
+            AddGraphObject(Graphics.CreateGraphics(x, y));
+
+            return this;
+        }
+
+        public Node AddLabelGraphics(string label)
+        {
+            AddGraphObject(LabelGraphics.CreateLabelGraphics(label));
+
+            return this;
         }
     }
 }
