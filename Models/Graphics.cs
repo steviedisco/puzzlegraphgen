@@ -15,7 +15,7 @@ namespace PuzzleGraphGenerator.Models
 
             AddGraphObject(Attribute.CreateAttribute("x", "double", x));
             AddGraphObject(Attribute.CreateAttribute("y", "double", y));
-            AddGraphObject(Attribute.CreateAttribute("w", "double", 40));
+            AddGraphObject(Attribute.CreateAttribute("w", "double", 60));
             AddGraphObject(Attribute.CreateAttribute("h", "double", 40));
             AddGraphObject(Attribute.CreateAttribute("type", "String", "roundrectangle"));
             AddGraphObject(Attribute.CreateAttribute("raisedBorder", "boolean", false));

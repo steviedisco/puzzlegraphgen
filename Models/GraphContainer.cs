@@ -7,12 +7,17 @@ namespace PuzzleGraphGenerator.Models
     [Serializable]
     public class GraphContainer : Section
     {
-        public GraphContainer()
+        private GraphContainer()
         {
             Name = "xgml";
 
             AddGraphObject(Attribute.CreateAttribute("Creator", "String", "yFiles"));
             AddGraphObject(Attribute.CreateAttribute("Version", "String", 2.17));
+        }
+
+        public static GraphContainer CreateGraphContainer()
+        {
+            return new GraphContainer();
         }
 
         public Graph AddGraph()
