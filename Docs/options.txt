@@ -1,0 +1,23 @@
+Puzzle Gen Options
+------------------
+Solving puzzles gives you things you need to solve other puzzles
+Random Seed (reload, save to list)
+Over game length
+Harder puzzles toward end
+Random puzzle difficulty
+Easy, Medium, Difficult Puzzles
+or scale 1-10?
+Max simultaneous puzzles
+Max branches (?)
+Max Verticality
+Max Horizontality (?)
+Naming convention
+Save areas, regen others?
+Left-to-right or Top-to-bottom
+Edge/Arrow style
+'Acts' - separate chart for each
+Optional dependencies?
+Build a dependency structure matrix
+Build a Gantt chart
+Section off areas like overarching puzzles like in DOTT
+Narrative development separate from puzzle chart (beats)
