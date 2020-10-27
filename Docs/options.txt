@@ -21,3 +21,9 @@ Build a dependency structure matrix
 Build a Gantt chart
 Section off areas like overarching puzzles like in DOTT
 Narrative development separate from puzzle chart (beats)
+Isolate sub-plots to aid narrative (and sub-sub-plots)
+size, complexity, difficulty and pace
+Able to go straight into multiple branches, or simple puzzles required first (tutorial)
+Start at end and work backward
+Narrative dependency graph? Separate from puzzle dependency but based on it
+Time-range per puzzle (best/worst) - play with difficulty
