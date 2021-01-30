@@ -26,6 +26,20 @@ namespace PuzzleGraphGenerator.Models
 
     public class PuzzleStart : PuzzleGoal
     {
-        public override bool IsStart { get; } = true;
+        public PuzzleStart(PuzzleGoal goal)
+        {
+            PuzzleResults.Clear();
+            PuzzleResults.Add(new PuzzleResult { NextPuzzle = goal });
+        }
+
+        public PuzzleStart(List<PuzzleGoal> goals)
+        {
+            PuzzleResults.Clear();
+
+            foreach (var goal in goals)
+            {
+                PuzzleResults.Add(new PuzzleResult { NextPuzzle = goal });
+            }
+        }
     }
 }

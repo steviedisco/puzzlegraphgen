@@ -63,23 +63,26 @@ namespace PuzzleGraphGenerator.Models
 
             foreach (var nextResult in goal.PuzzleResults)
             {
-                if (!plottedNodes.Contains(nextResult.NextPuzzle.Id))
+                foreach (var nextPuzzle in nextResult.NextPuzzles)
                 {
-                    plottedNodes.Add(nextResult.NextPuzzle.Id);
-
-                    var keys = plottedPositions.Keys.Where(x => x >= y);
-
-                    foreach (var key in keys)
+                    if (!plottedNodes.Contains(nextPuzzle.Id))
                     {
-                        while (plottedPositions[key].Contains(x))
+                        plottedNodes.Add(nextPuzzle.Id);
+
+                        var keys = plottedPositions.Keys.Where(x => x >= y);
+
+                        foreach (var key in keys)
                         {
-                            x += xStep;
+                            while (plottedPositions[key].Contains(x))
+                            {
+                                x += xStep;
+                            }
                         }
+
+                        plottedPositions[y].Add(x);
+
+                        graph.Plot(nextPuzzle, x, y + yStep);
                     }
-
-                    plottedPositions[y].Add(x);
-
-                    graph.Plot(nextResult.NextPuzzle, x, y + yStep);
                 }
             }
 
@@ -87,11 +90,19 @@ namespace PuzzleGraphGenerator.Models
             {
                 goal.Position = (x, y);
 
-                graph.AddNode(goal.Id, goal.Title).AddGraphics(goal.Position, nodeWidth, nodeHeight).AddLabelGraphics(goal.Title);
+                graph.AddNode(goal.Id, goal.Title)
+                     .AddGraphics(goal.Position, nodeWidth, nodeHeight)
+                     .AddLabelGraphics(goal.Title);
 
                 foreach (var nextResult in goal.PuzzleResults)
                 {
-                    graph.AddEdge(goal.Id, nextResult.NextPuzzle.Id).AddEdgeGraphics().AddLine().AddPoints(goal.Position, nextResult.NextPuzzle.Position);
+                    foreach (var nextPuzzle in nextResult.NextPuzzles)
+                    {
+                        graph.AddEdge(goal.Id, nextPuzzle.Id)
+                         .AddEdgeGraphics()
+                         .AddLine()
+                         .AddPoints(goal.Position, nextPuzzle.Position);
+                    }
                 }
             }
         }        

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -11,7 +12,7 @@ namespace PuzzleGraphGenerator
     {
         static void Main()
         {
-            var graph = CreateDOTTGraph(); 
+            var graph = CreateBranchingGraph(); 
             var serializer = new XmlSerializer(typeof(GraphContainer));
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -163,60 +164,80 @@ namespace PuzzleGraphGenerator
 
         #endregion
 
+        #region dott
+
         private static GraphContainer CreateDOTTGraph()
         {
             // work backwards from last puzzle to first
-            var final_puzzle = new PuzzleGoal { Title = "Get the Super Battery" };
+            var final = new PuzzleGoal { Title = "Get the Super Battery" };
 
             // layer 4
-            var gold_puzzle = new PuzzleGoal { Title = "Get the gold" };
-            gold_puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Gold", NextPuzzle = final_puzzle });
+            var gold = new PuzzleGoal { Title = "Get the gold" };
+            gold.PuzzleResults.Add(new PuzzleResult { Name = "Gold", NextPuzzle = final });
 
-            var vinegar_puzzle = new PuzzleGoal { Title = "Get Vinegar" };
-            vinegar_puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Vinegar", NextPuzzle = final_puzzle });
+            var vinegar = new PuzzleGoal { Title = "Get Vinegar" };
+            vinegar.PuzzleResults.Add(new PuzzleResult { Name = "Vinegar", NextPuzzle = final });
 
             // layer 3
-            var fire_puzzle = new PuzzleGoal { Title = "Build a fire in the fireplace" };
-            fire_puzzle.PuzzleResults.Add(new PuzzleResult { Name = "The Blanket", NextPuzzle = gold_puzzle });
+            var fire = new PuzzleGoal { Title = "Build a fire in the fireplace" };
+            fire.PuzzleResults.Add(new PuzzleResult { Name = "The Blanket", NextPuzzle = gold });
 
-            var denture_puzzle = new PuzzleGoal { Title = "Dentures to Laverne" };
-            denture_puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Access to History Room", NextPuzzle = final_puzzle });
+            var denture = new PuzzleGoal { Title = "Dentures to Laverne" };
+            denture.PuzzleResults.Add(new PuzzleResult { Name = "Access to History Room", NextPuzzle = vinegar });
 
             // layer 2
-            var cigar_puzzle = new PuzzleGoal { Title = "Get exploding cigar" };
-            cigar_puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Exploding cigar lighter gun", NextPuzzle = fire_puzzle });
+            var cigar = new PuzzleGoal { Title = "Get exploding cigar" };
+            cigar.PuzzleResults.Add(new PuzzleResult { Name = "Exploding cigar lighter gun", NextPuzzle = fire });
 
-            var laverne_puzzle = new PuzzleGoal { Title = "Laverne access outside" };
-            laverne_puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Access Laverne's chron-o-john", NextPuzzle = denture_puzzle });
+            var laverne = new PuzzleGoal { Title = "Laverne access outside" };
+            laverne.PuzzleResults.Add(new PuzzleResult { Name = "Access Laverne's chron-o-john", NextPuzzle = denture });
 
             // Start layer
-            var dwayne_puzzle = new PuzzleGoal { Title = "Get into Dwayne's room" };
-            dwayne_puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Flag Gun", NextPuzzle = cigar_puzzle });
+            var dwayne = new PuzzleGoal { Title = "Get into Dwayne's room" };
+            dwayne.PuzzleResults.Add(new PuzzleResult { Name = "Flag Gun", NextPuzzle = cigar });
 
-            var tree_puzzle = new PuzzleGoal { Title = "Get Laverne down from tree" };
-            tree_puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Laverne", NextPuzzle = laverne_puzzle });
+            var tree = new PuzzleGoal { Title = "Get Laverne down from tree" };
+            tree.PuzzleResults.Add(new PuzzleResult { Name = "Laverne", NextPuzzle = laverne });
 
-            var getdenture_puzzle = new PuzzleGoal { Title = "Get Dentures" };
-            getdenture_puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Dentures", NextPuzzle = denture_puzzle });
+            var getdenture = new PuzzleGoal { Title = "Get Dentures" };
+            getdenture.PuzzleResults.Add(new PuzzleResult { Name = "Dentures", NextPuzzle = denture });
 
-            var makevinegar_puzzle = new PuzzleGoal { Title = "Make Vinegar" };
-            makevinegar_puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Vinegar in Time Capsule", NextPuzzle = vinegar_puzzle });
+            var makevinegar = new PuzzleGoal { Title = "Make Vinegar" };
+            makevinegar.PuzzleResults.Add(new PuzzleResult { Name = "Vinegar in Time Capsule", NextPuzzle = vinegar });
 
-            var redEd_plans_puzzle = new PuzzleGoal { Title = "Give plans to Red Edison" };
-            redEd_plans_puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Red Edison can build Battery", NextPuzzle = final_puzzle });
+            var redEd = new PuzzleGoal { Title = "Give plans to Red Edison" };
+            redEd.PuzzleResults.Add(new PuzzleResult { Name = "Red Edison can build Battery", NextPuzzle = final });
 
-            var start_puzzle = new PuzzleStart();
-            start_puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Dwayne Puzzle Start", NextPuzzle = dwayne_puzzle, IsStart = true });
-            start_puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Tree Puzzle Start", NextPuzzle = tree_puzzle, IsStart = true });
-            start_puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Denture Puzzle Start", NextPuzzle = getdenture_puzzle, IsStart = true });
-            start_puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Vinegar Puzzle Start", NextPuzzle = makevinegar_puzzle, IsStart = true });
-            start_puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Red Ed Puzzle Start", NextPuzzle = redEd_plans_puzzle, IsStart = true });
+            var start = new PuzzleStart(new List<PuzzleGoal>() { dwayne, tree, getdenture, makevinegar, redEd });
 
             var container = GraphContainer.Create();
             var graph = container.AddGraph();
 
             graph.InitialisePlot();
-            graph.Plot(start_puzzle);            
+            graph.Plot(start);            
+
+            return container;
+        }
+
+        #endregion
+
+        private static GraphContainer CreateBranchingGraph()
+        {
+            // work backwards from last puzzle to first
+            var a = new PuzzleGoal { Title = "Branch A" };
+            var b = new PuzzleGoal { Title = "Branch B" };
+            var c = new PuzzleGoal { Title = "Branch C" };
+
+            var puzzle = new PuzzleGoal { Title = "Do a puzzle" };
+            puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Solved", NextPuzzles = {a, b, c} });
+
+            var start = new PuzzleStart(puzzle);
+
+            var container = GraphContainer.Create();
+            var graph = container.AddGraph();
+
+            graph.InitialisePlot();
+            graph.Plot(start);
 
             return container;
         }

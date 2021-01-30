@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace PuzzleGraphGenerator.Models
 {
@@ -8,9 +6,16 @@ namespace PuzzleGraphGenerator.Models
     {
         public string Name { get; set; }
 
-        public PuzzleGoal NextPuzzle { get; set; }        
+        public PuzzleGoal NextPuzzle 
+        { 
+            set
+            {
+                NextPuzzles.Clear();
+                NextPuzzles.Add(value);
+            }
+        }
 
-        public bool IsStart { get; set; } = false;        
+        public List<PuzzleGoal> NextPuzzles { get; set; } = new List<PuzzleGoal>();
     }
 
     public class KeyDialog : PuzzleResult { }
