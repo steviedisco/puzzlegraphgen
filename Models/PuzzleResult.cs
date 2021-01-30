@@ -8,9 +8,9 @@ namespace PuzzleGraphGenerator.Models
     {
         public string Name { get; set; }
 
-        public PuzzleGoal NextPuzzle { get; set; }
+        public PuzzleGoal NextPuzzle { get; set; }        
 
-        public bool IsStart { get; set; } = false;
+        public bool IsStart { get; set; } = false;        
     }
 
     public class KeyDialog : PuzzleResult { }

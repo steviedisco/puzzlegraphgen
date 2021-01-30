@@ -13,24 +13,24 @@ namespace PuzzleGraphGenerator.Models
         {
             Name = "graph";
 
-            AddGraphObject(Attribute.CreateAttribute("hierarchic", "int", 1));
-            AddGraphObject(Attribute.CreateAttribute("label", "String", ""));
-            AddGraphObject(Attribute.CreateAttribute("directed", "int", 1));
+            AddGraphObject(Attribute.Create("hierarchic", "int", 1));
+            AddGraphObject(Attribute.Create("label", "String", ""));
+            AddGraphObject(Attribute.Create("directed", "int", 1));
         }
 
-        public static Graph CreateGraph()
+        public static Graph Create()
         {
             return new Graph();
         }
 
         public Node AddNode(int id, string label)
         {
-            return AddGraphObject(Node.CreateNode(id, label)) as Node;
+            return AddGraphObject(Node.Create(id, label)) as Node;
         }
 
         public Edge AddEdge(int source, int target)
         {
-            return AddGraphObject(Edge.CreateEdge(source, target)) as Edge;
+            return AddGraphObject(Edge.Create(source, target)) as Edge;
         }
     }
 
@@ -45,47 +45,55 @@ namespace PuzzleGraphGenerator.Models
         private const int nodeWidth = 150;
         private const int nodeHeight = 50;
 
-        private static Dictionary<int, List<int>> plottedNodes = new Dictionary<int, List<int>>();
+        private static Dictionary<int, List<int>> plottedPositions;
+        private static List<int> plottedNodes;
 
-        public static void PlotGraph(this Graph graph, PuzzleGoal goal, int x = xStart, int y = yStart)
+        public static void InitialisePlot(this Graph graph)
         {
-            var currentX = x;
+            plottedPositions = new Dictionary<int, List<int>>();
+            plottedNodes = new List<int>();
+        }
 
-            if (!plottedNodes.ContainsKey(y))
+        public static void Plot(this Graph graph, PuzzleGoal goal, int x = xStart, int y = yStart)
+        {
+            if (!plottedPositions.ContainsKey(y))
             {
-                plottedNodes.Add(y, new List<int>());
+                plottedPositions.Add(y, new List<int>());
             }
 
             foreach (var nextResult in goal.PuzzleResults)
-            {                
-                if (nextResult.NextPuzzle.Id == 0)
+            {
+                if (!plottedNodes.Contains(nextResult.NextPuzzle.Id))
                 {
-                    nextResult.NextPuzzle.Id = PuzzleGoal.GetNextId();
+                    plottedNodes.Add(nextResult.NextPuzzle.Id);
 
-                    var keys = plottedNodes.Keys.Where(x => x >= y);
+                    var keys = plottedPositions.Keys.Where(x => x >= y);
 
                     foreach (var key in keys)
                     {
-                        while (plottedNodes[key].Contains(x))
+                        while (plottedPositions[key].Contains(x))
                         {
                             x += xStep;
                         }
                     }
 
-                    plottedNodes[y].Add(x);
+                    plottedPositions[y].Add(x);
 
-                    graph.PlotGraph(nextResult.NextPuzzle, x, y + yStep);
+                    graph.Plot(nextResult.NextPuzzle, x, y + yStep);
                 }
             }
 
             if (!(goal is PuzzleStart))
             {
-                graph.AddNode(goal.Id, goal.Title).AddGraphics(currentX, y, nodeWidth, nodeHeight).AddLabelGraphics(goal.Title);
+                goal.Position = (x, y);
+
+                graph.AddNode(goal.Id, goal.Title).AddGraphics(goal.Position, nodeWidth, nodeHeight).AddLabelGraphics(goal.Title);
 
                 foreach (var nextResult in goal.PuzzleResults)
                 {
-                    graph.AddEdge(goal.Id, nextResult.NextPuzzle.Id).AddEdgeGraphics();
+                    graph.AddEdge(goal.Id, nextResult.NextPuzzle.Id).AddEdgeGraphics().AddLine().AddPoints(goal.Position, nextResult.NextPuzzle.Position);
                 }
-        }
+            }
+        }        
     }
 }

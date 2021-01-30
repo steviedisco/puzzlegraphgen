@@ -15,20 +15,18 @@ namespace PuzzleGraphGenerator.Models
         {
             Name = "edge";
 
-            AddGraphObject(Attribute.CreateAttribute("source", "int", source));
-            AddGraphObject(Attribute.CreateAttribute("target", "int", target));
+            AddGraphObject(Attribute.Create("source", "int", source));
+            AddGraphObject(Attribute.Create("target", "int", target));
         }
 
-        public static Edge CreateEdge(int source, int target)
+        public static Edge Create(int source, int target)
         {
             return new Edge(source, target);
         }
 
-        public Edge AddEdgeGraphics()
+        public EdgeGraphics AddEdgeGraphics()
         {
-            AddGraphObject(EdgeGraphics.CreateEdgeGraphics());
-
-            return this;
+            return AddGraphObject(EdgeGraphics.Create()) as EdgeGraphics;
         }
     }
 }

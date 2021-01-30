@@ -13,13 +13,13 @@ namespace PuzzleGraphGenerator.Models
         {
             Name = "LabelGraphics";
 
-            AddGraphObject(Attribute.CreateAttribute("text", "String", label));
-            AddGraphObject(Attribute.CreateAttribute("fontSize", "int", 12));
-            AddGraphObject(Attribute.CreateAttribute("fontName", "String", "Calibri"));
-            AddGraphObject(Attribute.CreateAttribute("model"));
+            AddGraphObject(Attribute.Create("text", "String", label));
+            AddGraphObject(Attribute.Create("fontSize", "int", 12));
+            AddGraphObject(Attribute.Create("fontName", "String", "Calibri"));
+            AddGraphObject(Attribute.Create("model"));
         }
 
-        public static LabelGraphics CreateLabelGraphics(string label)
+        public static LabelGraphics Create(string label)
         {
             return new LabelGraphics(label);
         }

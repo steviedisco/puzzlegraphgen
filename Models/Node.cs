@@ -15,25 +15,25 @@ namespace PuzzleGraphGenerator.Models
         {
             Name = "node";
 
-            AddGraphObject(Attribute.CreateAttribute("id", "int", id));
-            AddGraphObject(Attribute.CreateAttribute("label", "String", label));
+            AddGraphObject(Attribute.Create("id", "int", id));
+            AddGraphObject(Attribute.Create("label", "String", label));
         }
 
-        public static Node CreateNode(int id, string label)
+        public static Node Create(int id, string label)
         {
             return new Node(id, label);
         }
 
-        public Node AddGraphics(double x, double y, double w = 60, double h = 40)
+        public Node AddGraphics((double, double) position, double w = 60, double h = 40)
         {
-            AddGraphObject(Graphics.CreateGraphics(x, y, w, h));
+            AddGraphObject(Graphics.Create(position.Item1, position.Item2, w, h));
 
             return this;
         }
 
         public Node AddLabelGraphics(string label)
         {
-            AddGraphObject(LabelGraphics.CreateLabelGraphics(label));
+            AddGraphObject(LabelGraphics.Create(label));
 
             return this;
         }

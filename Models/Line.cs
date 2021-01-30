@@ -3,6 +3,7 @@ using System.Xml.Serialization;
 
 namespace PuzzleGraphGenerator.Models
 {
+    [XmlInclude(typeof(Point))]
     [XmlType(TypeName = "section", Namespace = "Line")]
     [Serializable]
     public class Line : Section
@@ -12,16 +13,16 @@ namespace PuzzleGraphGenerator.Models
             Name = "Line";
         }
 
-        public static Line CreateLine()
+        public static Line Create()
         {
             return new Line();
         }
 
-        public Line AddPoint(double x, double y)
+        public void AddPoints((double, double) point1, (double, double) point2)
         {
-            AddGraphObject(Point.CreatePoint(x, y));
-
-            return this;
+            AddGraphObject(Point.Create(point1));
+            AddGraphObject(Point.Create(point1.Item1, point2.Item2));
+            AddGraphObject(Point.Create(point2));
         }
     }
 }

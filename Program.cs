@@ -29,135 +29,139 @@ namespace PuzzleGraphGenerator
             Console.WriteLine("Generated Successfully");
         }
 
-        private static GraphContainer CreateSimpleGraph()
-        {
-            var container = GraphContainer.CreateGraphContainer();
-            var graph = container.AddGraph();
+        #region test stuff
 
-            const int x = 100;
-            const int max_nodes = 5;
-            var starty = -100;
-            var stepy = 80;
+        //private static GraphContainer CreateSimpleGraph()
+        //{
+        //    var container = GraphContainer.Create();
+        //    var graph = container.AddGraph();
 
-            for (int i = 0; i < max_nodes; i++)
-            {
-                var label = (i == max_nodes - 1) ? "Finish" : (i == 0) ? "Start" : $"Node {i}";
-                var y = starty + (stepy * i);
-                graph.AddNode(i, label).AddGraphics(x, y).AddLabelGraphics(label);
-            }
+        //    const int x = 100;
+        //    const int max_nodes = 5;
+        //    var starty = -100;
+        //    var stepy = 80;
 
-            for (int i = 0; i < max_nodes - 1; i++)
-            {
-                graph.AddEdge(i, i + 1).AddEdgeGraphics();
-            }
+        //    for (int i = 0; i < max_nodes; i++)
+        //    {
+        //        var label = (i == max_nodes - 1) ? "Finish" : (i == 0) ? "Start" : $"Node {i}";
+        //        var y = starty + (stepy * i);
+        //        graph.AddNode(i, label).AddGraphics(x, y).AddLabelGraphics(label);
+        //    }
 
-            return container;
-        }
+        //    for (int i = 0; i < max_nodes - 1; i++)
+        //    {
+        //        graph.AddEdge(i, i + 1).AddEdgeGraphics();
+        //    }
 
-        private static GraphContainer Create2PathGraph()
-        {
-            var container = GraphContainer.CreateGraphContainer();
-            var graph = container.AddGraph();
+        //    return container;
+        //}
 
-            const int max_nodes = 3;
-            const int offsetx = 100;
-            const int stepy = 80;
-            const int chara = 65;
-            var starty = -220;
+        //private static GraphContainer Create2PathGraph()
+        //{
+        //    var container = GraphContainer.Create();
+        //    var graph = container.AddGraph();
 
-            graph.AddNode(0, "Start").AddGraphics(0, starty).AddLabelGraphics("Start");
-            graph.AddNode(1, "Puzzle 1").AddGraphics(0, starty + stepy).AddLabelGraphics("Puzzle 1");
+        //    const int max_nodes = 3;
+        //    const int offsetx = 100;
+        //    const int stepy = 80;
+        //    const int chara = 65;
+        //    var starty = -220;
 
-            graph.AddEdge(0, 1).AddEdgeGraphics();
+        //    graph.AddNode(0, "Start").AddGraphics(0, starty).AddLabelGraphics("Start");
+        //    graph.AddNode(1, "Puzzle 1").AddGraphics(0, starty + stepy).AddLabelGraphics("Puzzle 1");
 
-            var label = string.Empty;
-            var id = 2;
-            var previd = 1;
-            var joinids = new int[2];
+        //    graph.AddEdge(0, 1).AddEdgeGraphics();
 
-            for (int i = -1; i <= 1; i+=2)
-            {
-                previd = 1;
+        //    var label = string.Empty;
+        //    var id = 2;
+        //    var previd = 1;
+        //    var joinids = new int[2];
 
-                for (int j = 2; j < 2 + max_nodes; j++)
-                {
-                    var prefix = (char)(chara + ((i + 1) / 2));
-                    var y = starty + (stepy * j);
-                    label = $"Puzzle {prefix}{j}";
+        //    for (int i = -1; i <= 1; i+=2)
+        //    {
+        //        previd = 1;
 
-                    graph.AddNode(id, label).AddGraphics(i * offsetx, y).AddLabelGraphics(label);
-                    graph.AddEdge(previd, id).AddEdgeGraphics();
-                    previd = id;
-                    id++;
-                }
+        //        for (int j = 2; j < 2 + max_nodes; j++)
+        //        {
+        //            var prefix = (char)(chara + ((i + 1) / 2));
+        //            var y = starty + (stepy * j);
+        //            label = $"Puzzle {prefix}{j}";
 
-                joinids[(i + 1) / 2] = previd;
-            }
+        //            graph.AddNode(id, label).AddGraphics(i * offsetx, y).AddLabelGraphics(label);
+        //            graph.AddEdge(previd, id).AddEdgeGraphics();
+        //            previd = id;
+        //            id++;
+        //        }
 
-            label = $"Puzzle {max_nodes + 2}";
-            graph.AddNode(id, label).AddGraphics(0, starty + (stepy * (max_nodes + 2))).AddLabelGraphics(label);
-            graph.AddEdge(joinids[0], id).AddEdgeGraphics();
-            graph.AddEdge(joinids[1], id).AddEdgeGraphics();
-            previd = id++;
+        //        joinids[(i + 1) / 2] = previd;
+        //    }
 
-            graph.AddNode(id, "Finish").AddGraphics(0, starty + (stepy * (max_nodes + 3))).AddLabelGraphics("Finish");
-            graph.AddEdge(previd, id).AddEdgeGraphics();
+        //    label = $"Puzzle {max_nodes + 2}";
+        //    graph.AddNode(id, label).AddGraphics(0, starty + (stepy * (max_nodes + 2))).AddLabelGraphics(label);
+        //    graph.AddEdge(joinids[0], id).AddEdgeGraphics();
+        //    graph.AddEdge(joinids[1], id).AddEdgeGraphics();
+        //    previd = id++;
 
-            return container;
-        }
+        //    graph.AddNode(id, "Finish").AddGraphics(0, starty + (stepy * (max_nodes + 3))).AddLabelGraphics("Finish");
+        //    graph.AddEdge(previd, id).AddEdgeGraphics();
 
-        private static GraphContainer Create3PathGraph()
-        {
-            var container = GraphContainer.CreateGraphContainer();
-            var graph = container.AddGraph();
+        //    return container;
+        //}
 
-            const int max_nodes = 3;
-            const int offsetx = 150;
-            const int stepy = 80;
-            const int chara = 65;
-            var starty = -220;
+        //private static GraphContainer Create3PathGraph()
+        //{
+        //    var container = GraphContainer.Create();
+        //    var graph = container.AddGraph();
 
-            graph.AddNode(0, "Start").AddGraphics(0, starty).AddLabelGraphics("Start");
-            graph.AddNode(1, "Puzzle 1").AddGraphics(0, starty + stepy).AddLabelGraphics("Puzzle 1");
+        //    const int max_nodes = 3;
+        //    const int offsetx = 150;
+        //    const int stepy = 80;
+        //    const int chara = 65;
+        //    var starty = -220;
 
-            graph.AddEdge(0, 1).AddEdgeGraphics();
+        //    graph.AddNode(0, "Start").AddGraphics(0, starty).AddLabelGraphics("Start");
+        //    graph.AddNode(1, "Puzzle 1").AddGraphics(0, starty + stepy).AddLabelGraphics("Puzzle 1");
 
-            var label = string.Empty;
-            var id = 2;
-            var previd = 1;
-            var joinids = new int[3];
+        //    graph.AddEdge(0, 1).AddEdgeGraphics();
 
-            for (int i = -1; i <= 1; i++)
-            {
-                previd = 1;
+        //    var label = string.Empty;
+        //    var id = 2;
+        //    var previd = 1;
+        //    var joinids = new int[3];
 
-                for (int j = 2; j < 2 + max_nodes; j++)
-                {
-                    var prefix = (char)(chara + (i + 1));
-                    var y = starty + (stepy * j);
-                    label = $"Puzzle {prefix}{j}";
+        //    for (int i = -1; i <= 1; i++)
+        //    {
+        //        previd = 1;
 
-                    graph.AddNode(id, label).AddGraphics(i * offsetx, y).AddLabelGraphics(label);
-                    graph.AddEdge(previd, id).AddEdgeGraphics();
-                    previd = id;
-                    id++;
-                }
+        //        for (int j = 2; j < 2 + max_nodes; j++)
+        //        {
+        //            var prefix = (char)(chara + (i + 1));
+        //            var y = starty + (stepy * j);
+        //            label = $"Puzzle {prefix}{j}";
 
-                joinids[(i + 1)] = previd;
-            }
+        //            graph.AddNode(id, label).AddGraphics(i * offsetx, y).AddLabelGraphics(label);
+        //            graph.AddEdge(previd, id).AddEdgeGraphics();
+        //            previd = id;
+        //            id++;
+        //        }
 
-            label = $"Puzzle {max_nodes + 2}";
-            graph.AddNode(id, label).AddGraphics(0, starty + (stepy * (max_nodes + 2))).AddLabelGraphics(label);
-            graph.AddEdge(joinids[0], id).AddEdgeGraphics();
-            graph.AddEdge(joinids[1], id).AddEdgeGraphics();
-            graph.AddEdge(joinids[2], id).AddEdgeGraphics();
-            previd = id++;
+        //        joinids[(i + 1)] = previd;
+        //    }
 
-            graph.AddNode(id, "Finish").AddGraphics(0, starty + (stepy * (max_nodes + 3))).AddLabelGraphics("Finish");
-            graph.AddEdge(previd, id).AddEdgeGraphics();
+        //    label = $"Puzzle {max_nodes + 2}";
+        //    graph.AddNode(id, label).AddGraphics(0, starty + (stepy * (max_nodes + 2))).AddLabelGraphics(label);
+        //    graph.AddEdge(joinids[0], id).AddEdgeGraphics();
+        //    graph.AddEdge(joinids[1], id).AddEdgeGraphics();
+        //    graph.AddEdge(joinids[2], id).AddEdgeGraphics();
+        //    previd = id++;
 
-            return container;
-        }
+        //    graph.AddNode(id, "Finish").AddGraphics(0, starty + (stepy * (max_nodes + 3))).AddLabelGraphics("Finish");
+        //    graph.AddEdge(previd, id).AddEdgeGraphics();
+
+        //    return container;
+        //}
+
+        #endregion
 
         private static GraphContainer CreateDOTTGraph()
         {
@@ -208,10 +212,11 @@ namespace PuzzleGraphGenerator
             start_puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Vinegar Puzzle Start", NextPuzzle = makevinegar_puzzle, IsStart = true });
             start_puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Red Ed Puzzle Start", NextPuzzle = redEd_plans_puzzle, IsStart = true });
 
-            var container = GraphContainer.CreateGraphContainer();
+            var container = GraphContainer.Create();
             var graph = container.AddGraph();
 
-            graph.PlotGraph(start_puzzle);
+            graph.InitialisePlot();
+            graph.Plot(start_puzzle);            
 
             return container;
         }

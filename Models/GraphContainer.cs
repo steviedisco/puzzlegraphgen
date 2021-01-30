@@ -11,18 +11,18 @@ namespace PuzzleGraphGenerator.Models
         {
             Name = "xgml";
 
-            AddGraphObject(Attribute.CreateAttribute("Creator", "String", "yFiles"));
-            AddGraphObject(Attribute.CreateAttribute("Version", "String", 2.17));
+            AddGraphObject(Attribute.Create("Creator", "String", "yFiles"));
+            AddGraphObject(Attribute.Create("Version", "String", 2.17));
         }
 
-        public static GraphContainer CreateGraphContainer()
+        public static GraphContainer Create()
         {
             return new GraphContainer();
         }
 
         public Graph AddGraph()
         {
-            return AddGraphObject(Graph.CreateGraph()) as Graph;
+            return AddGraphObject(Graph.Create()) as Graph;
         }
     }
 }

@@ -13,6 +13,7 @@ namespace PuzzleGraphGenerator.Models
     [XmlInclude(typeof(LabelGraphics))]
     [XmlInclude(typeof(Edge))]
     [XmlInclude(typeof(EdgeGraphics))]
+    [XmlInclude(typeof(Line))]
     [XmlType(TypeName = "section", Namespace = "Section" )]
     [Serializable]
     public class Section : IGraphObject

@@ -11,13 +11,18 @@ namespace PuzzleGraphGenerator.Models
         {
             Name = "graphics";
 
-            AddGraphObject(Attribute.CreateAttribute("fill", "String", "#000000"));
-            AddGraphObject(Attribute.CreateAttribute("targetArrow", "String", "standard"));
+            AddGraphObject(Attribute.Create("fill", "String", "#000000"));
+            AddGraphObject(Attribute.Create("targetArrow", "String", "standard"));
         }
 
-        public static EdgeGraphics CreateEdgeGraphics()
+        public static EdgeGraphics Create()
         {
             return new EdgeGraphics();
+        }
+
+        public Line AddLine()
+        {
+            return AddGraphObject(Line.Create()) as Line;
         }
     }
 }

@@ -7,15 +7,22 @@ namespace PuzzleGraphGenerator.Models
     [Serializable]
     public class Point : Section
     {
+        private Point() { }
+
         private Point(double x, double y)
         {
             Name = "point";
 
-            AddGraphObject(Attribute.CreateAttribute("x", "double", x));
-            AddGraphObject(Attribute.CreateAttribute("y", "double", y));
+            AddGraphObject(Attribute.Create("x", "double", x));
+            AddGraphObject(Attribute.Create("y", "double", y));
         }
 
-        public static Point CreatePoint(double x, double y)
+        public static Point Create((double, double) point)
+        {
+            return Create(point.Item1, point.Item2);
+        }
+
+        public static Point Create(double x, double y)
         {
             return new Point(x, y);
         }

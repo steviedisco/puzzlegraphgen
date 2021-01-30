@@ -13,17 +13,17 @@ namespace PuzzleGraphGenerator.Models
         {
             Name = "graphics";
 
-            AddGraphObject(Attribute.CreateAttribute("x", "double", x));
-            AddGraphObject(Attribute.CreateAttribute("y", "double", y));
-            AddGraphObject(Attribute.CreateAttribute("w", "double", w));
-            AddGraphObject(Attribute.CreateAttribute("h", "double", h));
-            AddGraphObject(Attribute.CreateAttribute("type", "String", "roundrectangle"));
-            AddGraphObject(Attribute.CreateAttribute("raisedBorder", "boolean", false));
-            AddGraphObject(Attribute.CreateAttribute("fill", "String", "#FFCC00"));
-            AddGraphObject(Attribute.CreateAttribute("outline", "String", "#000000"));
+            AddGraphObject(Attribute.Create("x", "double", x));
+            AddGraphObject(Attribute.Create("y", "double", y));
+            AddGraphObject(Attribute.Create("w", "double", w));
+            AddGraphObject(Attribute.Create("h", "double", h));
+            AddGraphObject(Attribute.Create("type", "String", "roundrectangle"));
+            AddGraphObject(Attribute.Create("raisedBorder", "boolean", false));
+            AddGraphObject(Attribute.Create("fill", "String", "#FFCC00"));
+            AddGraphObject(Attribute.Create("outline", "String", "#000000"));
         }
 
-        public static Graphics CreateGraphics(double x, double y, double w, double h)
+        public static Graphics Create(double x, double y, double w, double h)
         {
             return new Graphics(x, y, w, h);
         }

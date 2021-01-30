@@ -17,7 +17,7 @@ namespace PuzzleGraphGenerator.Models
         [XmlText]
         public string Value { get; set; } = string.Empty;
 
-        public static Attribute CreateAttribute(
+        public static Attribute Create(
             string key, string type = null, object value = null) 
         {
             return new Attribute
