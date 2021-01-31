@@ -36,11 +36,11 @@ namespace PuzzleGraphGenerator.Models
 
     public static class GraphExtensions
     {
-        private const int xStep = 170;
-        private const int xStart = -400;
+        private const int xStep = 200;
+        private const int xStart = 0;
 
-        private const int yStep = 120;
-        private const int yStart = -400;
+        private const int yStep = 150;
+        private const int yStart = 0;
 
         private const int nodeWidth = 150;
         private const int nodeHeight = 50;
@@ -54,7 +54,7 @@ namespace PuzzleGraphGenerator.Models
             plottedNodes = new List<int>();
         }
 
-        public static void Plot(this Graph graph, PuzzleGoal goal, int x = xStart, int y = yStart)
+        public static int Plot(this Graph graph, PuzzleGoal goal, int x = xStart, int y = yStart)
         {
             if (!plottedPositions.ContainsKey(y))
             {
@@ -81,7 +81,7 @@ namespace PuzzleGraphGenerator.Models
 
                         plottedPositions[y].Add(x);
 
-                        graph.Plot(nextPuzzle, x, y + yStep);
+                        x = Math.Max(x, graph.Plot(nextPuzzle, x, y + yStep));
                     }
                 }
             }
@@ -96,15 +96,27 @@ namespace PuzzleGraphGenerator.Models
 
                 foreach (var nextResult in goal.PuzzleResults)
                 {
+                    var points = new List<(double, double)>();
+                    var index = 0;
+
+                    foreach (var nextPuzzle in nextResult.NextPuzzles)
+                    {
+                        points.Add(nextPuzzle.Position);
+                    }
+
                     foreach (var nextPuzzle in nextResult.NextPuzzles)
                     {
                         graph.AddEdge(goal.Id, nextPuzzle.Id)
                          .AddEdgeGraphics()
                          .AddLine()
-                         .AddPoints(goal.Position, nextPuzzle.Position);
+                         .AddPoints(goal.Position, points, index);
+
+                        index++;
                     }
                 }
             }
+
+            return x;
         }        
     }
 }

@@ -223,15 +223,40 @@ namespace PuzzleGraphGenerator
 
         private static GraphContainer CreateBranchingGraph()
         {
-            // work backwards from last puzzle to first
+            var final = new PuzzleGoal { Title = "Final puzzle" };
+            final.PuzzleResults.Add(new PuzzleResult { Name = "Solved" });
+
             var a = new PuzzleGoal { Title = "Branch A" };
+            a.PuzzleResults.Add(new PuzzleResult { Name = "Solved", NextPuzzle = final });
+
             var b = new PuzzleGoal { Title = "Branch B" };
+            b.PuzzleResults.Add(new PuzzleResult { Name = "Solved", NextPuzzle = final });
+
             var c = new PuzzleGoal { Title = "Branch C" };
+            c.PuzzleResults.Add(new PuzzleResult { Name = "Solved", NextPuzzle = final });
 
-            var puzzle = new PuzzleGoal { Title = "Do a puzzle" };
-            puzzle.PuzzleResults.Add(new PuzzleResult { Name = "Solved", NextPuzzles = {a, b, c} });
+            var puzzleA = new PuzzleGoal { Title = "Do a puzzle" };
+            puzzleA.PuzzleResults.Add(new PuzzleResult { Name = "Solved", NextPuzzle = a });
 
-            var start = new PuzzleStart(puzzle);
+            var puzzleB = new PuzzleGoal { Title = "Do another puzzle" };
+            puzzleB.PuzzleResults.Add(new PuzzleResult { Name = "Solved", NextPuzzles = { b, c } });
+
+            var d = new PuzzleGoal { Title = "Branch D" };
+            d.PuzzleResults.Add(new PuzzleResult { Name = "Solved", NextPuzzle = final });
+
+            var e = new PuzzleGoal { Title = "Branch E" };
+            e.PuzzleResults.Add(new PuzzleResult { Name = "Solved", NextPuzzle = final });
+
+            var puzzleC = new PuzzleGoal { Title = "It's another puzzle" };
+            puzzleC.PuzzleResults.Add(new PuzzleResult { Name = "Solved", NextPuzzles = { d, e } });
+
+            var second = new PuzzleGoal { Title = "Second puzzle" };
+            second.PuzzleResults.Add(new PuzzleResult { Name = "Solved", NextPuzzles = { puzzleA, puzzleB, puzzleC } });
+
+            var first = new PuzzleGoal { Title = "First puzzle" };
+            first.PuzzleResults.Add(new PuzzleResult { Name = "Solved", NextPuzzle = second });
+
+            var start = new PuzzleStart(first);
 
             var container = GraphContainer.Create();
             var graph = container.AddGraph();
