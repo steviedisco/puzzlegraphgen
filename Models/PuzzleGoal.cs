@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace PuzzleGraphGenerator.Models
@@ -8,38 +9,44 @@ namespace PuzzleGraphGenerator.Models
     {
         private static int nextId = 0;
 
-        public int Id { get; } = nextId++;
+        public int Id { get; } = nextId += 2;
 
         public string Title { get; set; }
 
         public virtual bool IsStart { get; } = false;
 
-        public List<PuzzleResult> PuzzleResults { get; set; }
+        public PuzzleResult PuzzleResult { get; set; }
 
         public (double, double) Position { get; set; } = (0, 0);
 
-        public PuzzleGoal()
+        public PuzzleGoal(string title)
         {
-            PuzzleResults = new List<PuzzleResult>();
-        }        
+            Title = title;
+        }
+
+        public PuzzleGoal(string title, string solved, PuzzleGoal nextPuzzle)
+        {
+            Title = title;
+            PuzzleResult = new PuzzleResult { PrizeName = solved, NextPuzzle = nextPuzzle };
+        }
+
+        public PuzzleGoal(string title, string solved, List<PuzzleGoal> nextPuzzles)
+        {
+            Title = title;
+            PuzzleResult = new PuzzleResult { PrizeName = solved, NextPuzzles = nextPuzzles };
+        }
     }
 
     public class PuzzleStart : PuzzleGoal
     {
-        public PuzzleStart(PuzzleGoal goal)
+        public PuzzleStart(PuzzleGoal goal) : base("Start")
         {
-            PuzzleResults.Clear();
-            PuzzleResults.Add(new PuzzleResult { NextPuzzle = goal });
+            PuzzleResult = new PuzzleResult { NextPuzzle = goal };
         }
 
-        public PuzzleStart(List<PuzzleGoal> goals)
+        public PuzzleStart(List<PuzzleGoal> goals) : base("Start")
         {
-            PuzzleResults.Clear();
-
-            foreach (var goal in goals)
-            {
-                PuzzleResults.Add(new PuzzleResult { NextPuzzle = goal });
-            }
+            PuzzleResult = new PuzzleResult { NextPuzzles = goals };
         }
     }
 }

@@ -4,7 +4,7 @@ namespace PuzzleGraphGenerator.Models
 {
     public class PuzzleResult
     {
-        public string Name { get; set; }
+        public string PrizeName { get; set; }
 
         public PuzzleGoal NextPuzzle 
         { 

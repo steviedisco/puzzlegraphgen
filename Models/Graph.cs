@@ -61,9 +61,9 @@ namespace PuzzleGraphGenerator.Models
                 plottedPositions.Add(y, new List<int>());
             }
 
-            foreach (var nextResult in goal.PuzzleResults)
+            if (goal.PuzzleResult != null)
             {
-                foreach (var nextPuzzle in nextResult.NextPuzzles)
+                foreach (var nextPuzzle in goal.PuzzleResult.NextPuzzles)
                 {
                     if (!plottedNodes.Contains(nextPuzzle.Id))
                     {
@@ -84,7 +84,7 @@ namespace PuzzleGraphGenerator.Models
                         x = Math.Max(x, graph.Plot(nextPuzzle, x, y + yStep));
                     }
                 }
-            }
+            }            
 
             if (!(goal is PuzzleStart))
             {
@@ -92,28 +92,46 @@ namespace PuzzleGraphGenerator.Models
 
                 graph.AddNode(goal.Id, goal.Title)
                      .AddGraphics(goal.Position, nodeWidth, nodeHeight)
-                     .AddLabelGraphics(goal.Title);
+                     .AddLabelGraphics(goal.Title);                
 
-                foreach (var nextResult in goal.PuzzleResults)
+                if (goal.PuzzleResult != null)
                 {
+                    var currentId = goal.Id;
+                    var currentPosition = goal.Position;
+
+                    if (!string.IsNullOrEmpty(goal.PuzzleResult.PrizeName))
+                    {
+                        currentId++;
+
+                        currentPosition = (goal.Position.Item1, goal.Position.Item2 + (yStep / 2));
+
+                        graph.AddNode(currentId, goal.PuzzleResult.PrizeName)
+                             .AddGraphics(currentPosition, nodeWidth, nodeHeight / 2, true)
+                             .AddLabelGraphics(goal.PuzzleResult.PrizeName);
+
+                        graph.AddEdge(currentId - 1, currentId)
+                             .AddEdgeGraphics()
+                             .AddLine();
+                    }
+
                     var points = new List<(double, double)>();
                     var index = 0;
 
-                    foreach (var nextPuzzle in nextResult.NextPuzzles)
+                    foreach (var nextPuzzle in goal.PuzzleResult.NextPuzzles)
                     {
                         points.Add(nextPuzzle.Position);
                     }
 
-                    foreach (var nextPuzzle in nextResult.NextPuzzles)
+                    foreach (var nextPuzzle in goal.PuzzleResult.NextPuzzles)
                     {
-                        graph.AddEdge(goal.Id, nextPuzzle.Id)
-                         .AddEdgeGraphics()
-                         .AddLine()
-                         .AddPoints(goal.Position, points, index);
+                        graph.AddEdge(currentId, nextPuzzle.Id)
+                             .AddEdgeGraphics()
+                             .AddLine()
+                             .AddPoints(currentPosition, points, index);
 
                         index++;
                     }
-                }
+                }                
             }
 
             return x;

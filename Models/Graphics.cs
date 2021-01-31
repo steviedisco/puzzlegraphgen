@@ -9,7 +9,7 @@ namespace PuzzleGraphGenerator.Models
     {
         private Graphics() { }
 
-        private Graphics(double x, double y, double w, double h)
+        private Graphics(double x, double y, double w, double h, bool isLabel = false)
         {
             Name = "graphics";
 
@@ -19,13 +19,22 @@ namespace PuzzleGraphGenerator.Models
             AddGraphObject(Attribute.Create("h", "double", h));
             AddGraphObject(Attribute.Create("type", "String", "roundrectangle"));
             AddGraphObject(Attribute.Create("raisedBorder", "boolean", false));
-            AddGraphObject(Attribute.Create("fill", "String", "#FFCC00"));
             AddGraphObject(Attribute.Create("outline", "String", "#000000"));
+
+            if (isLabel)
+            {
+                AddGraphObject(Attribute.Create("fill", "String", "#FFFFFF"));
+                AddGraphObject(Attribute.Create("customconfiguration", "String", "com.yworks.sbgn.Phenotype"));
+            }
+            else
+            {
+                AddGraphObject(Attribute.Create("fill", "String", "#FFCC00"));
+            }
         }
 
-        public static Graphics Create(double x, double y, double w, double h)
+        public static Graphics Create(double x, double y, double w, double h, bool isLabel = false)
         {
-            return new Graphics(x, y, w, h);
+            return new Graphics(x, y, w, h, isLabel);
         }
     }
 }

@@ -24,9 +24,9 @@ namespace PuzzleGraphGenerator.Models
             return new Node(id, label);
         }
 
-        public Node AddGraphics((double, double) position, double w = 60, double h = 40)
+        public Node AddGraphics((double, double) position, double w = 60, double h = 40, bool isLabel = false)
         {
-            AddGraphObject(Graphics.Create(position.Item1, position.Item2, w, h));
+            AddGraphObject(Graphics.Create(position.Item1, position.Item2, w, h, isLabel));
 
             return this;
         }
