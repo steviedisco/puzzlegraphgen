@@ -15,7 +15,7 @@ namespace PuzzleGraphGenerator.Models
 
         public virtual bool IsStart { get; } = false;
 
-        public PuzzleResult PuzzleResult { get; set; }
+        public PuzzleResult Result { get; set; }
 
         public (double, double) Position { get; set; } = (0, 0);
 
@@ -27,13 +27,13 @@ namespace PuzzleGraphGenerator.Models
         public PuzzleGoal(string title, string solved, PuzzleGoal nextPuzzle)
         {
             Title = title;
-            PuzzleResult = new PuzzleResult { PrizeName = solved, NextPuzzle = nextPuzzle };
+            Result = new PuzzleResult { PrizeName = solved, NextPuzzle = nextPuzzle };
         }
 
         public PuzzleGoal(string title, string solved, List<PuzzleGoal> nextPuzzles)
         {
             Title = title;
-            PuzzleResult = new PuzzleResult { PrizeName = solved, NextPuzzles = nextPuzzles };
+            Result = new PuzzleResult { PrizeName = solved, NextPuzzles = nextPuzzles };
         }
     }
 
@@ -41,12 +41,12 @@ namespace PuzzleGraphGenerator.Models
     {
         public PuzzleStart(PuzzleGoal goal) : base("Start")
         {
-            PuzzleResult = new PuzzleResult { NextPuzzle = goal };
+            Result = new PuzzleResult { NextPuzzle = goal };
         }
 
         public PuzzleStart(List<PuzzleGoal> goals) : base("Start")
         {
-            PuzzleResult = new PuzzleResult { NextPuzzles = goals };
+            Result = new PuzzleResult { NextPuzzles = goals };
         }
     }
 }

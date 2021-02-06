@@ -54,16 +54,18 @@ namespace PuzzleGraphGenerator.Models
             plottedNodes = new List<int>();
         }
 
-        public static int Plot(this Graph graph, PuzzleGoal goal, int x = xStart, int y = yStart)
+        public static int Plot(this Graph graph, PuzzleGoal goal, int x = xStart, int y = yStart, PuzzleGoal start = null)
         {
+            start = start ?? goal;
+
             if (!plottedPositions.ContainsKey(y))
             {
                 plottedPositions.Add(y, new List<int>());
             }
 
-            if (goal.PuzzleResult != null)
+            if (goal.Result != null)
             {
-                foreach (var nextPuzzle in goal.PuzzleResult.NextPuzzles)
+                foreach (var nextPuzzle in goal.Result.NextPuzzles)
                 {
                     if (!plottedNodes.Contains(nextPuzzle.Id))
                     {
@@ -84,57 +86,140 @@ namespace PuzzleGraphGenerator.Models
                         x = Math.Max(x, graph.Plot(nextPuzzle, x, y + yStep));
                     }
                 }
-            }            
+            }
 
-            if (!(goal is PuzzleStart))
+            goal.Position = (x, y);
+
+            graph.AddNode(goal.Id, goal.Title)
+                 .AddGraphics(goal.Position, nodeWidth, nodeHeight)
+                 .AddLabelGraphics(goal.Title);
+
+            if (goal.Result != null)
             {
-                goal.Position = (x, y);
+                var currentId = goal.Id;
+                var currentPosition = goal.Position;
 
-                graph.AddNode(goal.Id, goal.Title)
-                     .AddGraphics(goal.Position, nodeWidth, nodeHeight)
-                     .AddLabelGraphics(goal.Title);                
-
-                if (goal.PuzzleResult != null)
+                if (!string.IsNullOrEmpty(goal.Result.PrizeName))
                 {
-                    var currentId = goal.Id;
-                    var currentPosition = goal.Position;
+                    currentId++;
 
-                    if (!string.IsNullOrEmpty(goal.PuzzleResult.PrizeName))
-                    {
-                        currentId++;
+                    currentPosition = (goal.Position.Item1, goal.Position.Item2 + (yStep / 2));
 
-                        currentPosition = (goal.Position.Item1, goal.Position.Item2 + (yStep / 2));
+                    graph.AddNode(currentId, goal.Result.PrizeName)
+                         .AddGraphics(currentPosition, nodeWidth, nodeHeight / 2, true)
+                         .AddLabelGraphics(goal.Result.PrizeName);
 
-                        graph.AddNode(currentId, goal.PuzzleResult.PrizeName)
-                             .AddGraphics(currentPosition, nodeWidth, nodeHeight / 2, true)
-                             .AddLabelGraphics(goal.PuzzleResult.PrizeName);
+                    graph.AddEdge(currentId - 1, currentId)
+                         .AddEdgeGraphics()
+                         .AddLine();
+                }
 
-                        graph.AddEdge(currentId - 1, currentId)
-                             .AddEdgeGraphics()
-                             .AddLine();
-                    }
+                var points = new List<(double, double)>();
+                var index = 0;
 
-                    var points = new List<(double, double)>();
-                    var index = 0;
+                foreach (var nextPuzzle in goal.Result.NextPuzzles)
+                {
+                    points.Add(nextPuzzle.Position);
+                }
 
-                    foreach (var nextPuzzle in goal.PuzzleResult.NextPuzzles)
-                    {
-                        points.Add(nextPuzzle.Position);
-                    }
+                foreach (var nextPuzzle in goal.Result.NextPuzzles)
+                {
+                    graph.AddEdge(currentId, nextPuzzle.Id)
+                         .AddEdgeGraphics()
+                         .AddLine()
+                         .AddPoints(currentPosition, points, index, nextPuzzle.Id);
 
-                    foreach (var nextPuzzle in goal.PuzzleResult.NextPuzzles)
-                    {
-                        graph.AddEdge(currentId, nextPuzzle.Id)
-                             .AddEdgeGraphics()
-                             .AddLine()
-                             .AddPoints(currentPosition, points, index);
+                    index++;
+                }
+            }
 
-                        index++;
-                    }
-                }                
+            if (goal == start)
+            {
+                graph.SortNodes(start);
+                graph.BumpPoints(start);
             }
 
             return x;
-        }        
+        }
+
+        public static void SortNodes(this Graph graph, PuzzleGoal puzzle, double amount = 0)
+        {
+            if (puzzle.Result is null) return;
+            var puzzleNode = graph.GetAttributeNode(puzzle.Id, "y");
+
+            foreach (var next in puzzle.Result.NextPuzzles)
+            {
+                var nextNode = graph.GetAttributeNode(next.Id, "y");
+                amount = BumpNode(puzzleNode, nextNode, amount, yStep);
+
+                var prizeNode = graph.GetAttributeNode(next.Id + 1, "y");
+                amount = BumpNode(puzzleNode, prizeNode, amount, yStep + (yStep / 2));
+
+                graph.SortNodes(next, amount);
+            }
+        }
+
+        public static void BumpPoints(this Graph graph, PuzzleGoal puzzle)
+        {
+            if (puzzle.Result is null) return;
+
+            foreach (var next in puzzle.Result.NextPuzzles)
+            {
+                var nextNode = graph.GetAttributeNode(next.Id, "y");
+
+                graph.BumpPointNode(puzzle.Id + 1, next.Id, nextNode);
+                graph.BumpPoints(next);
+            }
+        }
+
+        private static double BumpNode(Attribute puzzleNode, Attribute nextNode, double amount, double step)
+        {
+            if (puzzleNode is null || nextNode is null) return amount;
+
+            if (int.Parse(puzzleNode.Value) >= int.Parse(nextNode.Value))
+            {
+                amount = (int.Parse(puzzleNode.Value) - int.Parse(nextNode.Value)) + step;
+            }
+
+            if (amount > 0)
+            {
+                nextNode.Value = (int.Parse(nextNode.Value) + amount).ToString();
+            }
+
+            return amount;
+        }
+
+        private static Attribute GetAttributeNode(this Graph graph, int id, string key)
+        {
+            var section = graph.Sections.Where(x => x.Attributes.Where(y => y.Key == "id" && y.Value == id.ToString()).Any()).FirstOrDefault() as Node;
+            if (section is null) return null;
+
+            var graphic = section.Sections.Where(x => x is Graphics).FirstOrDefault() as Graphics;
+            if (graphic is null) return null;
+
+            return graphic.Attributes.Where(x => x.Key == key).FirstOrDefault();
+        }
+
+        private static void BumpPointNode(this Graph graph, int sourceId, int targetId, Attribute nextNode)
+        {
+            var edge = graph.Sections.Where(x => x.Attributes.Where(y => y.Key == "source" && y.Value == sourceId.ToString()).Any()).FirstOrDefault() as Edge;
+            if (edge is null) return;
+
+            var graphic = edge.Sections.Where(x => x is EdgeGraphics).FirstOrDefault() as EdgeGraphics;
+            if (graphic is null) return;
+
+            var line = graphic.Sections.Where(x => x is Line).FirstOrDefault() as Line;
+            if (line is null) return;
+
+            var points = line.Sections.Where(x => x is Point).Select(x => x as Point).ToList();
+            if (!points.Any()) return;
+
+            var point = points.Where(x => x.Attributes.Any(y => y.Key == "nextId" && y.Value == targetId.ToString())).FirstOrDefault();
+
+            if (point != null)
+            {
+                point.Attributes.Where(x => x.Key == "y").First().Value = nextNode.Value;
+            }
+        }
     }
 }

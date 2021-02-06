@@ -9,22 +9,27 @@ namespace PuzzleGraphGenerator.Models
     {
         private Point() { }
 
-        private Point(double x, double y)
+        private Point(double x, double y, int nextId)
         {
             Name = "point";
 
             AddGraphObject(Attribute.Create("x", "double", x));
             AddGraphObject(Attribute.Create("y", "double", y));
+
+            if (nextId != 0)
+            {
+                AddGraphObject(Attribute.Create("nextId", "int", nextId));
+            }
         }
 
-        public static Point Create((double, double) point)
+        public static Point Create((double, double) point, int nextId = 0)
         {
-            return Create(point.Item1, point.Item2);
+            return Create(point.Item1, point.Item2, nextId);
         }
 
-        public static Point Create(double x, double y)
+        public static Point Create(double x, double y, int nextId = 0)
         {
-            return new Point(x, y);
+            return new Point(x, y, nextId);
         }
     }
 }

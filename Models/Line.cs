@@ -19,7 +19,7 @@ namespace PuzzleGraphGenerator.Models
             return new Line();
         }
 
-        public void AddPoints((double, double) point1, List<(double, double)> points2, int point2index)
+        public void AddPoints((double, double) point1, List<(double, double)> points2, int point2index, int nextId)
         {
             AddGraphObject(Point.Create(point1));
 
@@ -29,9 +29,8 @@ namespace PuzzleGraphGenerator.Models
             }
             else
             {
-                AddGraphObject(Point.Create(point1.Item1, points2[point2index].Item2));
+                AddGraphObject(Point.Create(point1.Item1, points2[point2index].Item2, nextId));
             }
-
 
             AddGraphObject(Point.Create(points2[point2index]));
         }
