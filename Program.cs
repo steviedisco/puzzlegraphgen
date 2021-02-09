@@ -228,7 +228,7 @@ namespace PuzzleGraphGenerator
             var cigar = new PuzzleGoal("Get exploding cigar", "Exploding Cigar Lighter Gun", blanket);
             var flagGun = new PuzzleGoal("Get into Dwayne's room", "Flag Gun", cigar);
 
-            var helpWantedSign = new PuzzleGoal("Secret Lab 1", "Help Wanted Sign", labCoat);
+            var secretLab1 = new PuzzleGoal("Secret Lab 1", "Help Wanted Sign", labCoat);
             var hoagie1 = new PuzzleGoal("Battery Plans 1", "Hoagie", labCoat);
 
             var bucketWaterBrush = new PuzzleGoal("Battery Plans 2", "Bucket, Water, Brush", franklinRoom);
@@ -247,11 +247,11 @@ namespace PuzzleGraphGenerator
             var plansParent = new PuzzleGoal("Find Super Battery Plans", string.Empty,
                 new List<PuzzleGoal> { hoagie1, bucketWaterBrush, hoagie2, patentLetter, oil, plans, wine });
 
-            var secretLab1 = new PuzzleGoal("Secret Lab 1", "Access to Living Room", chatteringTeeth);
-            var secretLab2 = new PuzzleGoal("Secret Lab 2", "Access to Secret Lab", plansParent);
+            var secretLab2 = new PuzzleGoal("Secret Lab 2", "Access to Living Room", chatteringTeeth);
+            var secretLab3 = new PuzzleGoal("Secret Lab 3", "Access to Secret Lab", plansParent);
 
             var labParent = new PuzzleGoal("Find Dr. Fred's Secret Lab", string.Empty,
-                new List<PuzzleGoal> { secretLab1, secretLab2 });
+                new List<PuzzleGoal> { secretLab1, secretLab2, secretLab3 });
 
             var begin = new PuzzleGoal("Begin Game", string.Empty, labParent);
 

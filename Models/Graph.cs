@@ -220,26 +220,38 @@ namespace PuzzleGraphGenerator.Models
 
                             if (allocated.ContainsKey(y1))
                             {
-                                if (x1 != x2 && y1 == y2 && allocated[y1].Any())
+                                if (x1 != x2 && y1 == y2 && allocated[y2].Any(x => x.Item2 < x2))
                                 {
                                     var puzzleNode = graph.GetAttributeNode(puzzle.Id, "y");
                                     var nextNode = graph.GetAttributeNode(next.Id, "y");
 
-                                    var amount = BumpNode(puzzleNode, nextNode, yStep, yStep, next.Id);
+                                    var amount = (int)BumpNode(puzzleNode, nextNode, yStep, yStep, next.Id);
 
                                     var prizeNode = graph.GetAttributeNode(next.Id + 1, "y");
-                                    amount = BumpNode(puzzleNode, prizeNode, amount, yStep + (yStep / 2), next.Id + 1);
+                                    amount = (int)BumpNode(puzzleNode, prizeNode, amount, yStep + (yStep / 2), next.Id + 1);
 
-                                    // graph.SortNodes(next, amount);
-                                    graph.BumpPoints(start);
+                                    if (allocated.ContainsKey(y1 + amount))
+                                    {
+                                        allocated[y1 + amount].Add((x1, x2));
+                                    }
+                                    else
+                                    {
+                                        allocated.Add(y1 + amount, new List<(int, int)>() { (x1, x2) });
+                                    }
+
+                                    graph.SortNodes(next, amount);
                                 }
-
-                                allocated[y1].Add((x1, x2));
+                                else
+                                {
+                                    allocated[y1].Add((x1, x2));
+                                }
                             }
                             else
                             {
                                 allocated.Add(y1, new List<(int, int)>() { (x1, x2) });
                             }
+
+                            graph.BumpPoints(start);
                         }
                     }
                 }
