@@ -48,7 +48,7 @@ namespace PuzzleGraphGenerator.Models
         private static Dictionary<int, List<int>> plottedPositions;
         private static List<int> plottedNodes;
 
-        public static void InitialisePlot(this Graph graph)
+        public static void Initialise(this Graph graph)
         {
             plottedPositions = new Dictionary<int, List<int>>();
             plottedNodes = new List<int>();
@@ -56,7 +56,9 @@ namespace PuzzleGraphGenerator.Models
 
         public static int Plot(this Graph graph, PuzzleGoal goal, int x = xStart, int y = yStart, PuzzleGoal start = null)
         {
-            start = start ?? goal;
+            if (start is null) graph.Initialise(); 
+
+            start ??= goal;
 
             if (!plottedPositions.ContainsKey(y))
             {
@@ -65,7 +67,7 @@ namespace PuzzleGraphGenerator.Models
 
             if (goal.Result != null)
             {
-                foreach (var nextPuzzle in goal.Result.NextPuzzles)
+                foreach (var nextPuzzle in goal.Result.NextPuzzles.Reverse<PuzzleGoal>())
                 {
                     if (!plottedNodes.Contains(nextPuzzle.Id))
                     {
@@ -83,12 +85,12 @@ namespace PuzzleGraphGenerator.Models
 
                         plottedPositions[y].Add(x);
 
-                        x = Math.Max(x, graph.Plot(nextPuzzle, x, y + yStep));
+                        x = Math.Max(x, graph.Plot(nextPuzzle, x, y + yStep, start));
                     }
                 }
             }
 
-            goal.Position = (x, y);
+            goal.Position = (xStart - x, y);
 
             graph.AddNode(goal.Id, goal.Title)
                  .AddGraphics(goal.Position, nodeWidth, nodeHeight)
@@ -117,12 +119,12 @@ namespace PuzzleGraphGenerator.Models
                 var points = new List<(double, double)>();
                 var index = 0;
 
-                foreach (var nextPuzzle in goal.Result.NextPuzzles)
+                foreach (var nextPuzzle in goal.Result.NextPuzzles.Reverse<PuzzleGoal>())
                 {
                     points.Add(nextPuzzle.Position);
                 }
 
-                foreach (var nextPuzzle in goal.Result.NextPuzzles)
+                foreach (var nextPuzzle in goal.Result.NextPuzzles.Reverse<PuzzleGoal>())
                 {
                     graph.AddEdge(currentId, nextPuzzle.Id)
                          .AddEdgeGraphics()
@@ -137,6 +139,7 @@ namespace PuzzleGraphGenerator.Models
             {
                 graph.SortNodes(start);
                 graph.BumpPoints(start);
+                graph.SortOverlaps(start);
             }
 
             return x;
@@ -150,10 +153,10 @@ namespace PuzzleGraphGenerator.Models
             foreach (var next in puzzle.Result.NextPuzzles)
             {
                 var nextNode = graph.GetAttributeNode(next.Id, "y");
-                amount = BumpNode(puzzleNode, nextNode, amount, yStep);
+                amount = BumpNode(puzzleNode, nextNode, amount, yStep, next.Id);
 
                 var prizeNode = graph.GetAttributeNode(next.Id + 1, "y");
-                amount = BumpNode(puzzleNode, prizeNode, amount, yStep + (yStep / 2));
+                amount = BumpNode(puzzleNode, prizeNode, amount, yStep + (yStep / 2), next.Id + 1);                
 
                 graph.SortNodes(next, amount);
             }
@@ -172,7 +175,7 @@ namespace PuzzleGraphGenerator.Models
             }
         }
 
-        private static double BumpNode(Attribute puzzleNode, Attribute nextNode, double amount, double step)
+        private static double BumpNode(Attribute puzzleNode, Attribute nextNode, double amount, double step, int id)
         {
             if (puzzleNode is null || nextNode is null) return amount;
 
@@ -187,6 +190,62 @@ namespace PuzzleGraphGenerator.Models
             }
 
             return amount;
+        }
+
+        private static void SortOverlaps(this Graph graph, PuzzleGoal puzzle, Dictionary<int, List<(int, int)>> allocated = null, PuzzleGoal start = null)
+        {
+            start ??= puzzle;
+            allocated ??= new Dictionary<int, List<(int, int)>>();
+
+            if (puzzle.Result is null) return;
+
+            foreach (var next in puzzle.Result.NextPuzzles)
+            {
+                foreach (var edge in graph.Sections.Where(x => x is Edge && 
+                    x.Attributes.Where(y => y.Key == "source" && y.Value == (puzzle.Id + 1).ToString()).Any() &&
+                    x.Attributes.Where(y => y.Key == "target" && y.Value == next.Id.ToString()).Any()).Select(x => x as Edge))
+                {
+                    foreach (var graphic in edge.Sections.Where(x => x is EdgeGraphics).Select(x => x as EdgeGraphics))
+                    {
+                        foreach (var line in graphic.Sections.Where(x => x is Line).Select(x => x as Line))
+                        {
+                            var points = line.Sections.Where(x => x is Point).Select(x => x as Point).ToList();
+
+                            if (points.Count() < 3) continue;
+
+                            var x1 = int.Parse(points[1].Attributes.Where(x => x.Key == "x").First().Value);
+                            var y1 = int.Parse(points[1].Attributes.Where(x => x.Key == "y").First().Value);
+                            var x2 = int.Parse(points[2].Attributes.Where(x => x.Key == "x").First().Value);
+                            var y2 = int.Parse(points[2].Attributes.Where(x => x.Key == "y").First().Value);
+
+                            if (allocated.ContainsKey(y1))
+                            {
+                                if (x1 != x2 && y1 == y2 && allocated[y1].Any())
+                                {
+                                    var puzzleNode = graph.GetAttributeNode(puzzle.Id, "y");
+                                    var nextNode = graph.GetAttributeNode(next.Id, "y");
+
+                                    var amount = BumpNode(puzzleNode, nextNode, yStep, yStep, next.Id);
+
+                                    var prizeNode = graph.GetAttributeNode(next.Id + 1, "y");
+                                    amount = BumpNode(puzzleNode, prizeNode, amount, yStep + (yStep / 2), next.Id + 1);
+
+                                    // graph.SortNodes(next, amount);
+                                    graph.BumpPoints(start);
+                                }
+
+                                allocated[y1].Add((x1, x2));
+                            }
+                            else
+                            {
+                                allocated.Add(y1, new List<(int, int)>() { (x1, x2) });
+                            }
+                        }
+                    }
+                }
+
+                graph.SortOverlaps(next, allocated);
+            }
         }
 
         private static Attribute GetAttributeNode(this Graph graph, int id, string key)

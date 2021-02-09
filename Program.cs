@@ -194,8 +194,7 @@ namespace PuzzleGraphGenerator
 
             var container = GraphContainer.Create();
             var graph = container.AddGraph();
-
-            graph.InitialisePlot();
+            
             graph.Plot(start);            
 
             return container;
@@ -261,7 +260,6 @@ namespace PuzzleGraphGenerator
             var container = GraphContainer.Create();
             var graph = container.AddGraph();
 
-            graph.InitialisePlot();
             graph.Plot(start);
 
             return container;
@@ -293,7 +291,6 @@ namespace PuzzleGraphGenerator
             var container = GraphContainer.Create();
             var graph = container.AddGraph();
 
-            graph.InitialisePlot();
             graph.Plot(start);
 
             return container;
