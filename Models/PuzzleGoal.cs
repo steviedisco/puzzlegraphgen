@@ -19,20 +19,21 @@ namespace PuzzleGraphGenerator.Models
 
         public (double, double) Position { get; set; } = (0, 0);
 
-        public PuzzleGoal(string title)
+        public bool Hidden { get; set; } = false;
+
+        public PuzzleGoal(string title, bool hidden = false)
         {
             Title = title;
+            Hidden = hidden;
         }
 
-        public PuzzleGoal(string title, string solved, PuzzleGoal nextPuzzle)
+        public PuzzleGoal(string title, string solved, PuzzleGoal nextPuzzle, bool hidden = false) : this(title, hidden)
         {
-            Title = title;
             Result = new PuzzleResult { PrizeName = solved, NextPuzzle = nextPuzzle };
         }
 
-        public PuzzleGoal(string title, string solved, List<PuzzleGoal> nextPuzzles)
+        public PuzzleGoal(string title, string solved, List<PuzzleGoal> nextPuzzles, bool hidden = false) : this(title, hidden)
         {
-            Title = title;
             Result = new PuzzleResult { PrizeName = solved, NextPuzzles = nextPuzzles };
         }
     }

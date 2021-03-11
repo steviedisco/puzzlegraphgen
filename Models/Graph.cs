@@ -32,6 +32,27 @@ namespace PuzzleGraphGenerator.Models
         {
             return AddGraphObject(Edge.Create(source, target)) as Edge;
         }
+
+        public void RemoveNode(int id)
+        {
+            var node = Nodes.Where(x => x is Node && (x as Node).Attributes.Where(y => y.Key == "id" && y.Value == id.ToString()).Any()).Select(x => x as Node).First();
+            RemoveGraphObject(node);
+        }
+
+        public void RemoveEdges(int id)
+        {
+            Nodes.Where(x => x is Edge && (x as Edge)
+                 .Attributes.Where(y => y.Key == "source" && y.Value == id.ToString()).Any()).ToList()
+                 .ForEach(x => {
+
+                     var edge = Nodes.Where(x => x is Edge && (x as Edge)
+                                     .Attributes.Where(y => y.Key == "target" && y.Value == id.ToString()).Any()).First();
+
+                     (edge as Edge).Attributes.Where(y => y.Key == "target").First().Value = (x as Edge).Attributes.Where(z => z.Key == "target").First().Value;
+
+                     RemoveGraphObject(x);
+                 });
+        }
     }
 
     public static class GraphExtensions
@@ -140,9 +161,27 @@ namespace PuzzleGraphGenerator.Models
                 graph.SortNodes(start);
                 graph.BumpPoints(start);
                 graph.SortOverlaps(start);
+                graph.HideNodes(start);
             }
 
             return x;
+        }
+
+        public static void HideNodes(this Graph graph, PuzzleGoal puzzle)
+        {
+            if (puzzle.Result is null) return;
+            var puzzleNode = graph.GetAttributeNode(puzzle.Id, "y");
+
+            if (puzzle.Hidden)
+            {
+                graph.RemoveEdges(puzzle.Id);
+                graph.RemoveNode(puzzle.Id);
+            }
+
+            foreach (var next in puzzle.Result.NextPuzzles)
+            {                
+                graph.HideNodes(next);
+            }
         }
 
         public static void SortNodes(this Graph graph, PuzzleGoal puzzle, double amount = 0)

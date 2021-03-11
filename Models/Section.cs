@@ -18,7 +18,7 @@ namespace PuzzleGraphGenerator.Models
     [Serializable]
     public class Section : IGraphObject
     {
-        private List<IGraphObject> Nodes { get; set; } = new List<IGraphObject>();
+        protected List<IGraphObject> Nodes { get; set; } = new List<IGraphObject>();
 
         [XmlElement("attribute")]
         public List<Attribute> Attributes
@@ -47,6 +47,11 @@ namespace PuzzleGraphGenerator.Models
         {
             Nodes.Add(graphObject);
             return graphObject;
+        }
+
+        public void RemoveGraphObject(IGraphObject graphObject)
+        {
+            Nodes.Remove(graphObject);
         }
 
         public static Section CreateSection(string name)

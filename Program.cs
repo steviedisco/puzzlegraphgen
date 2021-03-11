@@ -200,7 +200,7 @@ namespace PuzzleGraphGenerator
             return container;
         }
 
-        private static GraphContainer CreateFullDOTTGraph()
+        private static GraphContainer CreateMidDOTTGraph()
         {
             var win = new PuzzleGoal("Win the Game");
 
@@ -249,6 +249,71 @@ namespace PuzzleGraphGenerator
 
             var secretLab2 = new PuzzleGoal("Secret Lab 2", "Access to Living Room", chatteringTeeth);
             var secretLab3 = new PuzzleGoal("Secret Lab 3", "Access to Secret Lab", plansParent);
+
+            var labParent = new PuzzleGoal("Find Dr. Fred's Secret Lab", string.Empty,
+                new List<PuzzleGoal> { secretLab1, secretLab2, secretLab3 });
+
+            var begin = new PuzzleGoal("Begin Game", string.Empty, labParent);
+
+            var start = new PuzzleStart(begin);
+
+            var container = GraphContainer.Create();
+            var graph = container.AddGraph();
+
+            graph.Plot(start);
+
+            return container;
+        }
+
+        private static GraphContainer CreateFullDOTTGraph()
+        {
+            var win = new PuzzleGoal("Win the Game");
+
+            var tentacleBoss = new PuzzleGoal("Knock out ten Tentacles", "TentacleBoss", win);
+            var bowlingBall = new PuzzleGoal("Get Bowling Ball", "Bowling Ball", tentacleBoss);
+            var shrunkenKids = new PuzzleGoal("Back to the Present", "Shrunken Kids", bowlingBall);
+
+            var poweredJohn = new PuzzleGoal("Power Hoagie's Chron-o-John", "Hoagie's Chron-o-John Powered", shrunkenKids);
+            var chargedBattery = new PuzzleGoal("Charge Battery", "Charged Super Battery", poweredJohn);
+
+            var kite = new PuzzleGoal("Get Kite", "Kite", chargedBattery);
+
+            var labCoat = new PuzzleGoal("Get Lab Coat", "Lab Coat", kite);
+            var franklinRoom = new PuzzleGoal("Start Storm", "Franklin in his Room", kite);
+
+            var soap = new PuzzleGoal("Get Soap", "Soap", franklinRoom);
+
+            var superBattery = new PuzzleGoal("Get the Super Battery", "Super Battery", chargedBattery);
+
+            var gold = new PuzzleGoal("Get the Gold", "Gold", superBattery);
+            var buildBattery = new PuzzleGoal("Give plans to Red Edison", "Red Edison can Build Battery", superBattery);
+            var vinegar = new PuzzleGoal("Get Vinegar", "Vinegar", superBattery);
+
+            var blanket = new PuzzleGoal("Build a fire in the fireplace", "The Blanket", gold);
+            var cigar = new PuzzleGoal("Get exploding cigar", "Exploding Cigar Lighter Gun", blanket);
+            var flagGun = new PuzzleGoal("Get into Dwayne's room", "Flag Gun", cigar);
+
+            var secretLab1 = new PuzzleGoal("Secret Lab 1", "Help Wanted Sign", labCoat, hidden: true);
+            var hoagie1 = new PuzzleGoal("Battery Plans 1", "Hoagie", labCoat, hidden: true);
+
+            var bucketWaterBrush = new PuzzleGoal("Battery Plans 2", "Bucket, Water, Brush", franklinRoom, hidden: true);
+
+            var hoagie2 = new PuzzleGoal("Battery Plans 3", "Hoagie", soap, hidden: true);
+
+            var chatteringTeeth = new PuzzleGoal("Get Chattering Teeth", "Chattering Teeth", blanket);
+            var patentLetter = new PuzzleGoal("Battery Plans 4", "Hoagie Patent Letter", flagGun, hidden: true);
+
+            var oil = new PuzzleGoal("Battery Plans 5", "Oil", superBattery, hidden: true);
+
+            var plans = new PuzzleGoal("Battery Plans 6", "The Super Battery Plans", buildBattery, hidden: true);
+
+            var wine = new PuzzleGoal("Battery Plans 7", "Wine", vinegar, hidden: true);
+
+            var plansParent = new PuzzleGoal("Find Super Battery Plans", string.Empty,
+                new List<PuzzleGoal> { hoagie1, bucketWaterBrush, hoagie2, patentLetter, oil, plans, wine });
+
+            var secretLab2 = new PuzzleGoal("Secret Lab 2", "Access to Living Room", chatteringTeeth, hidden: true);
+            var secretLab3 = new PuzzleGoal("Secret Lab 3", "Access to Secret Lab", plansParent, hidden: true);
 
             var labParent = new PuzzleGoal("Find Dr. Fred's Secret Lab", string.Empty,
                 new List<PuzzleGoal> { secretLab1, secretLab2, secretLab3 });
