@@ -20,9 +20,9 @@ namespace PuzzleGraphGenerator.Models
             return new GraphContainer();
         }
 
-        public Graph AddGraph()
+        public Graph CreateGraph(PuzzleStart puzzleStart)
         {
-            return AddGraphObject(Graph.Create()) as Graph;
+            return AddGraphObject(Graph.Create(puzzleStart)) as Graph;
         }
     }
 }

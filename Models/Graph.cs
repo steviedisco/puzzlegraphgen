@@ -9,18 +9,25 @@ namespace PuzzleGraphGenerator.Models
     [Serializable]
     public class Graph : Section
     {
-        private Graph()
+        [XmlIgnore]
+        public PuzzleStart PuzzleStart { get; private set; }
+
+        private Graph() {}
+
+        private Graph(PuzzleStart puzzleStart)
         {
             Name = "graph";
 
             AddGraphObject(Attribute.Create("hierarchic", "int", 1));
             AddGraphObject(Attribute.Create("label", "String", ""));
             AddGraphObject(Attribute.Create("directed", "int", 1));
+
+            PuzzleStart = puzzleStart;
         }
 
-        public static Graph Create()
+        public static Graph Create(PuzzleStart puzzleStart)
         {
-            return new Graph();
+            return new Graph(puzzleStart);
         }
 
         public Node AddNode(int id, string label)
@@ -75,8 +82,10 @@ namespace PuzzleGraphGenerator.Models
             plottedNodes = new List<int>();
         }
 
-        public static int Plot(this Graph graph, PuzzleGoal goal, int x = xStart, int y = yStart, PuzzleGoal start = null)
+        public static int Plot(this Graph graph, PuzzleGoal goal = null, int x = xStart, int y = yStart, PuzzleGoal start = null)
         {
+            goal ??= graph.PuzzleStart; 
+
             if (start is null) graph.Initialise(); 
 
             start ??= goal;

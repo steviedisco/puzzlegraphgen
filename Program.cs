@@ -12,7 +12,7 @@ namespace PuzzleGraphGenerator
     {
         static void Main()
         {
-            var graph = CreateFullDOTTGraph(); 
+            var graph = CreateFullDigGraph(); 
             var serializer = new XmlSerializer(typeof(GraphContainer));
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -193,9 +193,9 @@ namespace PuzzleGraphGenerator
             var start = new PuzzleStart(new List<PuzzleGoal>() { dwayne, tree, getdenture, makevinegar, redEd });
 
             var container = GraphContainer.Create();
-            var graph = container.AddGraph();
+            var graph = container.CreateGraph(start);
             
-            graph.Plot(start);            
+            graph.Plot();            
 
             return container;
         }
@@ -258,74 +258,53 @@ namespace PuzzleGraphGenerator
             var start = new PuzzleStart(begin);
 
             var container = GraphContainer.Create();
-            var graph = container.AddGraph();
+            var graph = container.CreateGraph(start);
 
-            graph.Plot(start);
+            graph.Plot();
 
             return container;
         }
 
-        private static GraphContainer CreateFullDOTTGraph()
+        private static GraphContainer CreateFullDigGraph()
         {
-            var win = new PuzzleGoal("Win the Game");
+            var end = new PuzzleGoal("End Game");
 
-            var tentacleBoss = new PuzzleGoal("Knock out ten Tentacles", "TentacleBoss", win);
-            var bowlingBall = new PuzzleGoal("Get Bowling Ball", "Bowling Ball", tentacleBoss);
-            var shrunkenKids = new PuzzleGoal("Back to the Present", "Shrunken Kids", bowlingBall);
+            var killGuard = new PuzzleGoal("Kill guard", "Save everyone", end);
 
-            var poweredJohn = new PuzzleGoal("Power Hoagie's Chron-o-John", "Hoagie's Chron-o-John Powered", shrunkenKids);
-            var chargedBattery = new PuzzleGoal("Charge Battery", "Charged Super Battery", poweredJohn);
+            var openEye = new PuzzleGoal("Open eye", "Guard", killGuard);
 
-            var kite = new PuzzleGoal("Get Kite", "Kite", chargedBattery);
+            var completeStrangeDevice = new PuzzleGoal("Complete strange device", "Powered eye", openEye);
+            
+            var crystal = new PuzzleGoal("Crystal", "Crystal", completeStrangeDevice, hidden:true);
+            var eyePart = new PuzzleGoal("Eye part", "Eye part", completeStrangeDevice, hidden:true);
 
-            var labCoat = new PuzzleGoal("Get Lab Coat", "Lab Coat", kite);
-            var franklinRoom = new PuzzleGoal("Start Storm", "Franklin in his Room", kite);
+            var fixCrystalMachine = new PuzzleGoal("Fix crystal machine", "", new List<PuzzleGoal> { crystal, eyePart });
 
-            var soap = new PuzzleGoal("Get Soap", "Soap", franklinRoom);
+            var useMapPanel = new PuzzleGoal("Use map panel", "Eye part", fixCrystalMachine);
+            
+            var persuadeCreature = new PuzzleGoal("Persuade creature", "Creator's engraving", useMapPanel);
 
-            var superBattery = new PuzzleGoal("Get the Super Battery", "Super Battery", chargedBattery);
+            var completeEnergyLines = new PuzzleGoal("Complete energy lines", "Completed eye", openEye);
 
-            var gold = new PuzzleGoal("Get the Gold", "Gold", superBattery);
-            var buildBattery = new PuzzleGoal("Give plans to Red Edison", "Red Edison can Build Battery", superBattery);
-            var vinegar = new PuzzleGoal("Get Vinegar", "Vinegar", superBattery);
+            var activateLightBridge = new PuzzleGoal("Activate light bridge", "Light bridge", completeEnergyLines);
 
-            var blanket = new PuzzleGoal("Build a fire in the fireplace", "The Blanket", gold);
-            var cigar = new PuzzleGoal("Get exploding cigar", "Exploding Cigar Lighter Gun", blanket);
-            var flagGun = new PuzzleGoal("Get into Dwayne's room", "Flag Gun", cigar);
+            var completeAlcove = new PuzzleGoal("Complete alcove", "Access cathedral spire", new List<PuzzleGoal> { persuadeCreature, activateLightBridge });
 
-            var secretLab1 = new PuzzleGoal("Secret Lab 1", "Help Wanted Sign", labCoat, hidden: true);
-            var hoagie1 = new PuzzleGoal("Battery Plans 1", "Hoagie", labCoat, hidden: true);
+            var freeBrink = new PuzzleGoal("Free brink", "Brink freed", completeAlcove);
 
-            var bucketWaterBrush = new PuzzleGoal("Battery Plans 2", "Bucket, Water, Brush", franklinRoom, hidden: true);
+            var fourPlates = new PuzzleGoal("Four plates", "Four plates", completeAlcove, hidden:true);
+            var brinkTrapped = new PuzzleGoal("Brink trapped", "Brink trapped", freeBrink, hidden:true);
 
-            var hoagie2 = new PuzzleGoal("Battery Plans 3", "Hoagie", soap, hidden: true);
+            var collectFourPlates = new PuzzleGoal("Collect four plates", "test", new List<PuzzleGoal> { fourPlates, brinkTrapped });
 
-            var chatteringTeeth = new PuzzleGoal("Get Chattering Teeth", "Chattering Teeth", blanket);
-            var patentLetter = new PuzzleGoal("Battery Plans 4", "Hoagie Patent Letter", flagGun, hidden: true);
+            var fixOpenDoor = new PuzzleGoal("Fix/Open door", "Plate", collectFourPlates);
 
-            var oil = new PuzzleGoal("Battery Plans 5", "Oil", superBattery, hidden: true);
-
-            var plans = new PuzzleGoal("Battery Plans 6", "The Super Battery Plans", buildBattery, hidden: true);
-
-            var wine = new PuzzleGoal("Battery Plans 7", "Wine", vinegar, hidden: true);
-
-            var plansParent = new PuzzleGoal("Find Super Battery Plans", string.Empty,
-                new List<PuzzleGoal> { hoagie1, bucketWaterBrush, hoagie2, patentLetter, oil, plans, wine });
-
-            var secretLab2 = new PuzzleGoal("Secret Lab 2", "Access to Living Room", chatteringTeeth, hidden: true);
-            var secretLab3 = new PuzzleGoal("Secret Lab 3", "Access to Secret Lab", plansParent, hidden: true);
-
-            var labParent = new PuzzleGoal("Find Dr. Fred's Secret Lab", string.Empty,
-                new List<PuzzleGoal> { secretLab1, secretLab2, secretLab3 });
-
-            var begin = new PuzzleGoal("Begin Game", string.Empty, labParent);
-
-            var start = new PuzzleStart(begin);
+            var start = new PuzzleStart(fixOpenDoor);
 
             var container = GraphContainer.Create();
-            var graph = container.AddGraph();
+            var graph = container.CreateGraph(start);
 
-            graph.Plot(start);
+            graph.Plot();
 
             return container;
         }
@@ -354,9 +333,9 @@ namespace PuzzleGraphGenerator
             var start = new PuzzleStart(first);
 
             var container = GraphContainer.Create();
-            var graph = container.AddGraph();
+            var graph = container.CreateGraph(start);
 
-            graph.Plot(start);
+            graph.Plot();
 
             return container;
         }
