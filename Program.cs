@@ -295,7 +295,7 @@ namespace PuzzleGraphGenerator
             var fourPlates = new PuzzleGoal("Four plates", "Four plates", completeAlcove, hidden:true);
             var brinkTrapped = new PuzzleGoal("Brink trapped", "Brink trapped", freeBrink, hidden:true);
 
-            var collectFourPlates = new PuzzleGoal("Collect four plates", "test", new List<PuzzleGoal> { fourPlates, brinkTrapped });
+            var collectFourPlates = new PuzzleGoal("Collect four plates", "", new List<PuzzleGoal> { brinkTrapped, fourPlates });
 
             var fixOpenDoor = new PuzzleGoal("Fix/Open door", "Plate", collectFourPlates);
 

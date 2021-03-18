@@ -42,8 +42,8 @@ namespace PuzzleGraphGenerator.Models
 
         public void RemoveNode(int id)
         {
-            var node = Nodes.Where(x => x is Node && (x as Node).Attributes.Where(y => y.Key == "id" && y.Value == id.ToString()).Any()).Select(x => x as Node).First();
-            RemoveGraphObject(node);
+            var node = Nodes.Where(x => x is Node && (x as Node).Attributes.Where(y => y.Key == "id" && y.Value == id.ToString()).Any()).Select(x => x as Node).FirstOrDefault();
+            if (node != null) RemoveGraphObject(node);
         }
 
         public void RemoveEdges(int id)
