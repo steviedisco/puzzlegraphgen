@@ -288,6 +288,8 @@ namespace PuzzleGraphGenerator
             
             var persuadeCreature = new PuzzleGoal("Persuade creature", "Creator's engraving", useMapPanel);
 
+            var reviveCreature = new PuzzleGoal("Revive creature", "", persuadeCreature);
+
             var completeEnergyLines = new PuzzleGoal("Complete energy lines", "Completed eye", openEye);
 
             var activateLightBridge = new PuzzleGoal("Activate light bridge", "Light bridge", completeEnergyLines);
@@ -303,7 +305,18 @@ namespace PuzzleGraphGenerator
 
             var fixOpenDoor = new PuzzleGoal("Fix/Open door", "Plate", collectFourPlates);
 
-            var start = new PuzzleStart(fixOpenDoor);
+            var accessHiddenIsland = new PuzzleGoal("Access hidden island", "Plate", collectFourPlates);
+
+            var jumpGap = new PuzzleGoal("Jump gap", "Panel cover", new List<PuzzleGoal> { fixOpenDoor });
+
+            var crystals = new PuzzleGoal("", "Crystals", reviveCreature, hidden:true);
+            var tablet = new PuzzleGoal("", "Tablet", accessHiddenIsland, hidden:true);
+
+            var saveRobbins = new PuzzleGoal("Save robbins", "", new List<PuzzleGoal> { crystals, tablet });
+
+            var openDiamondDoor = new PuzzleGoal("Open diamond door", "Access planetarium spire", jumpGap);
+
+            var start = new PuzzleStart(openDiamondDoor);
 
             var container = GraphContainer.Create();
             var graph = container.CreateGraph(start);
