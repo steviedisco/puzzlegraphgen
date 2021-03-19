@@ -166,104 +166,108 @@ namespace PuzzleGraphGenerator
 
         #region dott
 
-        private static GraphContainer CreateDOTTGraph()
-        {
-            // work backwards from last puzzle to first
-            var final = new PuzzleGoal("Get the Super Battery");
+        //private static GraphContainer CreateDOTTGraph()
+        //{
+        //    // work backwards from last puzzle to first
+        //    var final = new PuzzleGoal("Get the Super Battery");
 
-            // layer 4
-            var gold = new PuzzleGoal("Get the gold", "Gold", final);
-            var vinegar = new PuzzleGoal("Get Vinegar", "Vinegar", final);
+        //    // layer 4
+        //    var gold = new PuzzleGoal("Get the gold", "Gold", final);
+        //    var vinegar = new PuzzleGoal("Get Vinegar", "Vinegar", final);
 
-            // layer 3
-            var fire = new PuzzleGoal("Build a fire in the fireplace", "The Blanket", gold);
-            var denture = new PuzzleGoal("Dentures to Laverne", "Access to History Room", vinegar);
+        //    // layer 3
+        //    var fire = new PuzzleGoal("Build a fire in the fireplace", "The Blanket", gold);
+        //    var denture = new PuzzleGoal("Dentures to Laverne", "Access to History Room", vinegar);
 
-            // layer 2
-            var cigar = new PuzzleGoal("Get exploding cigar", "Exploding cigar lighter gun", fire);
-            var laverne = new PuzzleGoal("Laverne access outside", "Access Laverne's chron-o-john", denture);
+        //    // layer 2
+        //    var cigar = new PuzzleGoal("Get exploding cigar", "Exploding cigar lighter gun", fire);
+        //    var laverne = new PuzzleGoal("Laverne access outside", "Access Laverne's chron-o-john", denture);
 
-            // Start layer
-            var dwayne = new PuzzleGoal("Get into Dwayne's room", "Flag Gun", cigar);
-            var tree = new PuzzleGoal("Get Laverne down from tree", "Laverne", laverne);
-            var getdenture = new PuzzleGoal("Get Dentures", "Dentures", denture);
-            var makevinegar = new PuzzleGoal("Make Vinegar", "Vinegar in Time Capsule", vinegar);
-            var redEd = new PuzzleGoal("Give plans to Red Edison", "Red Edison can build Battery", final);
+        //    // Start layer
+        //    var dwayne = new PuzzleGoal("Get into Dwayne's room", "Flag Gun", cigar);
+        //    var tree = new PuzzleGoal("Get Laverne down from tree", "Laverne", laverne);
+        //    var getdenture = new PuzzleGoal("Get Dentures", "Dentures", denture);
+        //    var makevinegar = new PuzzleGoal("Make Vinegar", "Vinegar in Time Capsule", vinegar);
+        //    var redEd = new PuzzleGoal("Give plans to Red Edison", "Red Edison can build Battery", final);
 
-            var start = new PuzzleStart(new List<PuzzleGoal>() { dwayne, tree, getdenture, makevinegar, redEd });
+        //    var start = new PuzzleStart(new List<PuzzleGoal>() { dwayne, tree, getdenture, makevinegar, redEd });
 
-            var container = GraphContainer.Create();
-            var graph = container.CreateGraph(start);
-            
-            graph.Plot();            
+        //    var container = GraphContainer.Create();
+        //    var graph = container.CreateGraph(start);
 
-            return container;
-        }
+        //    graph.Plot();            
 
-        private static GraphContainer CreateMidDOTTGraph()
-        {
-            var win = new PuzzleGoal("Win the Game");
+        //    return container;
+        //}
 
-            var tentacleBoss = new PuzzleGoal("Knock out ten Tentacles", "TentacleBoss", win);
-            var bowlingBall = new PuzzleGoal("Get Bowling Ball", "Bowling Ball", tentacleBoss);
-            var shrunkenKids = new PuzzleGoal("Back to the Present", "Shrunken Kids", bowlingBall);
+        //private static GraphContainer CreateMidDOTTGraph()
+        //{
+        //    var win = new PuzzleGoal("Win the Game");
 
-            var poweredJohn = new PuzzleGoal("Power Hoagie's Chron-o-John", "Hoagie's Chron-o-John Powered", shrunkenKids);
-            var chargedBattery = new PuzzleGoal("Charge Battery", "Charged Super Battery", poweredJohn);
+        //    var tentacleBoss = new PuzzleGoal("Knock out ten Tentacles", "TentacleBoss", win);
+        //    var bowlingBall = new PuzzleGoal("Get Bowling Ball", "Bowling Ball", tentacleBoss);
+        //    var shrunkenKids = new PuzzleGoal("Back to the Present", "Shrunken Kids", bowlingBall);
 
-            var kite = new PuzzleGoal("Get Kite", "Kite", chargedBattery);
+        //    var poweredJohn = new PuzzleGoal("Power Hoagie's Chron-o-John", "Hoagie's Chron-o-John Powered", shrunkenKids);
+        //    var chargedBattery = new PuzzleGoal("Charge Battery", "Charged Super Battery", poweredJohn);
 
-            var labCoat = new PuzzleGoal("Get Lab Coat", "Lab Coat", kite);
-            var franklinRoom = new PuzzleGoal("Start Storm", "Franklin in his Room", kite);
+        //    var kite = new PuzzleGoal("Get Kite", "Kite", chargedBattery);
 
-            var soap = new PuzzleGoal("Get Soap", "Soap", franklinRoom);
+        //    var labCoat = new PuzzleGoal("Get Lab Coat", "Lab Coat", kite);
+        //    var franklinRoom = new PuzzleGoal("Start Storm", "Franklin in his Room", kite);
 
-            var superBattery = new PuzzleGoal("Get the Super Battery", "Super Battery", chargedBattery);
+        //    var soap = new PuzzleGoal("Get Soap", "Soap", franklinRoom);
 
-            var gold = new PuzzleGoal("Get the Gold", "Gold", superBattery);
-            var buildBattery = new PuzzleGoal("Give plans to Red Edison", "Red Edison can Build Battery", superBattery);
-            var vinegar = new PuzzleGoal("Get Vinegar", "Vinegar", superBattery);
+        //    var superBattery = new PuzzleGoal("Get the Super Battery", "Super Battery", chargedBattery);
 
-            var blanket = new PuzzleGoal("Build a fire in the fireplace", "The Blanket", gold);
-            var cigar = new PuzzleGoal("Get exploding cigar", "Exploding Cigar Lighter Gun", blanket);
-            var flagGun = new PuzzleGoal("Get into Dwayne's room", "Flag Gun", cigar);
+        //    var gold = new PuzzleGoal("Get the Gold", "Gold", superBattery);
+        //    var buildBattery = new PuzzleGoal("Give plans to Red Edison", "Red Edison can Build Battery", superBattery);
+        //    var vinegar = new PuzzleGoal("Get Vinegar", "Vinegar", superBattery);
 
-            var secretLab1 = new PuzzleGoal("Secret Lab 1", "Help Wanted Sign", labCoat);
-            var hoagie1 = new PuzzleGoal("Battery Plans 1", "Hoagie", labCoat);
+        //    var blanket = new PuzzleGoal("Build a fire in the fireplace", "The Blanket", gold);
+        //    var cigar = new PuzzleGoal("Get exploding cigar", "Exploding Cigar Lighter Gun", blanket);
+        //    var flagGun = new PuzzleGoal("Get into Dwayne's room", "Flag Gun", cigar);
 
-            var bucketWaterBrush = new PuzzleGoal("Battery Plans 2", "Bucket, Water, Brush", franklinRoom);
+        //    var secretLab1 = new PuzzleGoal("Secret Lab 1", "Help Wanted Sign", labCoat);
+        //    var hoagie1 = new PuzzleGoal("Battery Plans 1", "Hoagie", labCoat);
 
-            var hoagie2 = new PuzzleGoal("Battery Plans 3", "Hoagie", soap);
+        //    var bucketWaterBrush = new PuzzleGoal("Battery Plans 2", "Bucket, Water, Brush", franklinRoom);
 
-            var chatteringTeeth = new PuzzleGoal("Get Chattering Teeth", "Chattering Teeth", blanket);
-            var patentLetter = new PuzzleGoal("Battery Plans 4", "Hoagie Patent Letter", flagGun);
+        //    var hoagie2 = new PuzzleGoal("Battery Plans 3", "Hoagie", soap);
 
-            var oil = new PuzzleGoal("Battery Plans 5", "Oil", superBattery);
+        //    var chatteringTeeth = new PuzzleGoal("Get Chattering Teeth", "Chattering Teeth", blanket);
+        //    var patentLetter = new PuzzleGoal("Battery Plans 4", "Hoagie Patent Letter", flagGun);
 
-            var plans = new PuzzleGoal("Battery Plans 6", "The Super Battery Plans", buildBattery);            
+        //    var oil = new PuzzleGoal("Battery Plans 5", "Oil", superBattery);
 
-            var wine = new PuzzleGoal("Battery Plans 7", "Wine", vinegar);
+        //    var plans = new PuzzleGoal("Battery Plans 6", "The Super Battery Plans", buildBattery);            
 
-            var plansParent = new PuzzleGoal("Find Super Battery Plans", string.Empty,
-                new List<PuzzleGoal> { hoagie1, bucketWaterBrush, hoagie2, patentLetter, oil, plans, wine });
+        //    var wine = new PuzzleGoal("Battery Plans 7", "Wine", vinegar);
 
-            var secretLab2 = new PuzzleGoal("Secret Lab 2", "Access to Living Room", chatteringTeeth);
-            var secretLab3 = new PuzzleGoal("Secret Lab 3", "Access to Secret Lab", plansParent);
+        //    var plansParent = new PuzzleGoal("Find Super Battery Plans", string.Empty,
+        //        new List<PuzzleGoal> { hoagie1, bucketWaterBrush, hoagie2, patentLetter, oil, plans, wine });
 
-            var labParent = new PuzzleGoal("Find Dr. Fred's Secret Lab", string.Empty,
-                new List<PuzzleGoal> { secretLab1, secretLab2, secretLab3 });
+        //    var secretLab2 = new PuzzleGoal("Secret Lab 2", "Access to Living Room", chatteringTeeth);
+        //    var secretLab3 = new PuzzleGoal("Secret Lab 3", "Access to Secret Lab", plansParent);
 
-            var begin = new PuzzleGoal("Begin Game", string.Empty, labParent);
+        //    var labParent = new PuzzleGoal("Find Dr. Fred's Secret Lab", string.Empty,
+        //        new List<PuzzleGoal> { secretLab1, secretLab2, secretLab3 });
 
-            var start = new PuzzleStart(begin);
+        //    var begin = new PuzzleGoal("Begin Game", string.Empty, labParent);
 
-            var container = GraphContainer.Create();
-            var graph = container.CreateGraph(start);
+        //    var start = new PuzzleStart(begin);
 
-            graph.Plot();
+        //    var container = GraphContainer.Create();
+        //    var graph = container.CreateGraph(start);
 
-            return container;
-        }
+        //    graph.Plot();
+
+        //    return container;
+        //}
+
+        #endregion
+
+        #region dig
 
         private static GraphContainer CreateFullDigGraph()
         {
@@ -295,7 +299,7 @@ namespace PuzzleGraphGenerator
             var fourPlates = new PuzzleGoal("Four plates", "Four plates", completeAlcove, hidden:true);
             var brinkTrapped = new PuzzleGoal("Brink trapped", "Brink trapped", freeBrink, hidden:true);
 
-            var collectFourPlates = new PuzzleGoal("Collect four plates", "", new List<PuzzleGoal> { brinkTrapped, fourPlates });
+            var collectFourPlates = new PuzzleGoal("Collect four plates", "", new List<PuzzleGoal> { fourPlates, brinkTrapped });
 
             var fixOpenDoor = new PuzzleGoal("Fix/Open door", "Plate", collectFourPlates);
 
@@ -311,33 +315,33 @@ namespace PuzzleGraphGenerator
 
         #endregion
 
-        private static GraphContainer CreateBranchingGraph()
-        {
-            var final = new PuzzleGoal("Final puzzle");
+        //private static GraphContainer CreateBranchingGraph()
+        //{
+        //    var final = new PuzzleGoal("Final puzzle");
 
-            var a = new PuzzleGoal("Branch A", "Item 6", final);
-            var b = new PuzzleGoal("Branch B", "Item 7", final);
-            var c = new PuzzleGoal("Branch C", "Item 8", final);
+        //    var a = new PuzzleGoal("Branch A", "Item 6", final);
+        //    var b = new PuzzleGoal("Branch B", "Item 7", final);
+        //    var c = new PuzzleGoal("Branch C", "Item 8", final);
 
-            var puzzleA = new PuzzleGoal("Do a puzzle", "Item 3", a);
-            var puzzleB = new PuzzleGoal("Do another puzzle", "Item 4", new List<PuzzleGoal>() { b, c });
+        //    var puzzleA = new PuzzleGoal("Do a puzzle", "Item 3", a);
+        //    var puzzleB = new PuzzleGoal("Do another puzzle", "Item 4", new List<PuzzleGoal>() { b, c });
 
-            var d = new PuzzleGoal ("Branch D", "Item 9", final);
-            var e = new PuzzleGoal ("Branch E", "Item 10", final);
+        //    var d = new PuzzleGoal ("Branch D", "Item 9", final);
+        //    var e = new PuzzleGoal ("Branch E", "Item 10", final);
 
-            var puzzleC = new PuzzleGoal("It's another puzzle", "Item 5", new List<PuzzleGoal>() { d, e });
+        //    var puzzleC = new PuzzleGoal("It's another puzzle", "Item 5", new List<PuzzleGoal>() { d, e });
 
-            var second = new PuzzleGoal("Second puzzle", "Item 2", new List<PuzzleGoal>() { puzzleA, puzzleB, puzzleC });
-            var first = new PuzzleGoal("First puzzle", "Item 1", second);
+        //    var second = new PuzzleGoal("Second puzzle", "Item 2", new List<PuzzleGoal>() { puzzleA, puzzleB, puzzleC });
+        //    var first = new PuzzleGoal("First puzzle", "Item 1", second);
 
-            var start = new PuzzleStart(first);
+        //    var start = new PuzzleStart(first);
 
-            var container = GraphContainer.Create();
-            var graph = container.CreateGraph(start);
+        //    var container = GraphContainer.Create();
+        //    var graph = container.CreateGraph(start);
 
-            graph.Plot();
+        //    graph.Plot();
 
-            return container;
-        }
+        //    return container;
+        //}
     }
 }

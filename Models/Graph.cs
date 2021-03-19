@@ -171,6 +171,7 @@ namespace PuzzleGraphGenerator.Models
                 graph.BumpPoints(start);
                 graph.SortOverlaps(start);
                 graph.HideNodes(start);
+                // TODO - closegaps
             }
 
             return x;
