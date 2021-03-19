@@ -284,8 +284,8 @@ namespace PuzzleGraphGenerator
 
             var fixCrystalMachine = new PuzzleGoal("Fix crystal machine", "", new List<PuzzleGoal> { crystal, eyePart });
 
-            var useMapPanel = new PuzzleGoal("Use map panel", "Eye part", fixCrystalMachine);
-            
+            var useMapPanel = new PuzzleGoal("Use map panel", "Eye part", fixCrystalMachine);            
+
             var persuadeCreature = new PuzzleGoal("Persuade creature", "Creator's engraving", useMapPanel);
 
             var reviveCreature = new PuzzleGoal("Revive creature", "", persuadeCreature);
@@ -314,9 +314,62 @@ namespace PuzzleGraphGenerator
 
             var saveRobbins = new PuzzleGoal("Save robbins", "", new List<PuzzleGoal> { crystals, tablet });
 
+            var distractMonster = new PuzzleGoal("Distract monster", "Rock by waterfall", saveRobbins);
+
+            var recruitBrink = new PuzzleGoal("Recruit brink", "Brink in position", distractMonster);
+
+            var distractBrink = new PuzzleGoal("Distract brink", "Stolen crystals", recruitBrink);
+
+            var reviveCreature2 = new PuzzleGoal("Revive creature", "Flashlight", distractBrink);
+
+            var openPyramid = new PuzzleGoal("Open pyramid", "Crystal", reviveCreature2);
+
+            var openDoor = new PuzzleGoal("Open door", "Access door", openPyramid);
+
+            var killGuard2 = new PuzzleGoal("Kill guard", "Access door", openDoor);
+
+            var moveSlab = new PuzzleGoal("Move slab", "Crystal", killGuard2);
+
+            var revealPassage = new PuzzleGoal("Reveal passage", "", moveSlab);
+
+            var turnOnLights = new PuzzleGoal("Turn on lights", "Light source under earth", revealPassage);
+
+            var openShutter = new PuzzleGoal("Open shutter", "Let light through", revealPassage);
+
+            var discoverChamber = new PuzzleGoal("Discover chamber", "", new List<PuzzleGoal> { turnOnLights, openShutter });
+
+            var digOutPlate = new PuzzleGoal("Dig out plate", "", discoverChamber);
+
+            var activateLightBridge2 = new PuzzleGoal("Activate light bridge", "Light bridge", completeEnergyLines);
+
+            var shovel = new PuzzleGoal("Shovel", "Shovel", digOutPlate, hidden: true);
+            var accessLightBridge = new PuzzleGoal("Access light bridge", "Access light bridge", activateLightBridge2, hidden: true);
+
+            var accessTombSpire = new PuzzleGoal("Access tomb spire", "", new List<PuzzleGoal> { shovel, accessLightBridge });
+
+            var energiseCrystals = new PuzzleGoal("Energise crystals", "Power tram", accessTombSpire);
+
+            var passAirlock = new PuzzleGoal("Pass airlock", "Access command centre", energiseCrystals);
+
+            var plate1 = new PuzzleGoal("Plate", "Plate", collectFourPlates, hidden: true);
+            var blueCrystal = new PuzzleGoal("Blue crystal", "Blue crystal", turnOnLights, hidden: true);
+            var accessTunnel = new PuzzleGoal("Access tunnel", "Access tunnel", passAirlock, hidden: true);
+
+            var findNexus = new PuzzleGoal("Find Nexus", "", new List<PuzzleGoal> { plate1, blueCrystal, accessTunnel }); // TODO
+
+            var goldRod = new PuzzleGoal("Gold rod", "Gold rod", openPyramid, hidden: true);
+            var goldEngravedRod = new PuzzleGoal("Gold engraved rod", "Gold engraved rod", openDoor, hidden: true);
+            var hole = new PuzzleGoal("Hole", "Hole", findNexus, hidden: true);
+
+            var pullWire = new PuzzleGoal("Pull wire", "", new List<PuzzleGoal> { goldRod, goldEngravedRod, hole }); // TODO
+
+            var accessWreck = new PuzzleGoal("Access wreck", "Access wreck", pullWire, hidden: true);
+
+            var travelToAlienPlanet = new PuzzleGoal("Travel to alien planet", "", new List<PuzzleGoal> { accessWreck }); // TODO
+
             var openDiamondDoor = new PuzzleGoal("Open diamond door", "Access planetarium spire", jumpGap);
 
-            var start = new PuzzleStart(openDiamondDoor);
+            var start = new PuzzleStart(travelToAlienPlanet);
 
             var container = GraphContainer.Create();
             var graph = container.CreateGraph(start);
