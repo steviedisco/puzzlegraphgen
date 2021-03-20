@@ -103,7 +103,7 @@ namespace PuzzleGraphGenerator.Models
                     {
                         plottedNodes.Add(nextPuzzle.Id);
 
-                        var keys = plottedPositions.Keys.Where(x => x >= y);
+                        var keys = plottedPositions.Keys.Where(f => f >= y);
 
                         foreach (var key in keys)
                         {
@@ -177,10 +177,11 @@ namespace PuzzleGraphGenerator.Models
             return x;
         }
 
-        public static void HideNodes(this Graph graph, PuzzleGoal puzzle)
+        public static void HideNodes(this Graph graph, PuzzleGoal puzzle = null)
         {
+            puzzle ??= graph.PuzzleStart;
+
             if (puzzle.Result is null) return;
-            var puzzleNode = graph.GetAttributeNode(puzzle.Id, "y");
 
             if (puzzle.Hidden)
             {
@@ -194,12 +195,14 @@ namespace PuzzleGraphGenerator.Models
             }
         }
 
-        public static void SortNodes(this Graph graph, PuzzleGoal puzzle, double amount = 0)
+        public static void SortNodes(this Graph graph, PuzzleGoal puzzle = null, double amount = 0)
         {
+            puzzle ??= graph.PuzzleStart;
+
             if (puzzle.Result is null) return;
             var puzzleNode = graph.GetAttributeNode(puzzle.Id, "y");
 
-            foreach (var next in puzzle.Result.NextPuzzles)
+            foreach (var next in puzzle.Result.NextPuzzles.Reverse<PuzzleGoal>())
             {
                 var nextNode = graph.GetAttributeNode(next.Id, "y");
                 amount = BumpNode(puzzleNode, nextNode, amount, yStep, next.Id);
@@ -211,8 +214,10 @@ namespace PuzzleGraphGenerator.Models
             }
         }
 
-        public static void BumpPoints(this Graph graph, PuzzleGoal puzzle)
+        public static void BumpPoints(this Graph graph, PuzzleGoal puzzle = null)
         {
+            puzzle ??= graph.PuzzleStart;
+
             if (puzzle.Result is null) return;
 
             foreach (var next in puzzle.Result.NextPuzzles)
@@ -241,8 +246,9 @@ namespace PuzzleGraphGenerator.Models
             return amount;
         }
 
-        private static void SortOverlaps(this Graph graph, PuzzleGoal puzzle, Dictionary<int, List<(int, int)>> allocated = null, PuzzleGoal start = null)
+        private static void SortOverlaps(this Graph graph, PuzzleGoal puzzle = null, Dictionary<int, List<(int, int)>> allocated = null, PuzzleGoal start = null)
         {
+            puzzle ??= graph.PuzzleStart;
             start ??= puzzle;
             allocated ??= new Dictionary<int, List<(int, int)>>();
 
