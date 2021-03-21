@@ -53,11 +53,13 @@ namespace PuzzleGraphGenerator.Models
                  .ForEach(x => {
 
                      var edge = Nodes.Where(x => x is Edge && (x as Edge)
-                                     .Attributes.Where(y => y.Key == "target" && y.Value == id.ToString()).Any()).First();
+                                     .Attributes.Where(y => y.Key == "target" && y.Value == id.ToString()).Any()).FirstOrDefault();
 
-                     (edge as Edge).Attributes.Where(y => y.Key == "target").First().Value = (x as Edge).Attributes.Where(z => z.Key == "target").First().Value;
-
-                     RemoveGraphObject(x);
+                     if (edge != null)
+                     {
+                         (edge as Edge).Attributes.Where(y => y.Key == "target").First().Value = (x as Edge).Attributes.Where(z => z.Key == "target").First().Value;
+                         RemoveGraphObject(x);
+                     }                     
                  });
         }
     }
@@ -168,10 +170,8 @@ namespace PuzzleGraphGenerator.Models
             if (goal == start)
             {
                 graph.SortNodes(start);
-                graph.BumpPoints(start);
-                graph.SortOverlaps(start);
-                graph.HideNodes(start);
-                // TODO - closegaps
+                //graph.BumpPoints(start);
+                //graph.HideNodes(start);
             }
 
             return x;
@@ -212,22 +212,7 @@ namespace PuzzleGraphGenerator.Models
 
                 graph.SortNodes(next, amount);
             }
-        }
-
-        public static void BumpPoints(this Graph graph, PuzzleGoal puzzle = null)
-        {
-            puzzle ??= graph.PuzzleStart;
-
-            if (puzzle.Result is null) return;
-
-            foreach (var next in puzzle.Result.NextPuzzles)
-            {
-                var nextNode = graph.GetAttributeNode(next.Id, "y");
-
-                graph.BumpPointNode(puzzle.Id + 1, next.Id, nextNode);
-                graph.BumpPoints(next);
-            }
-        }
+        }        
 
         private static double BumpNode(Attribute puzzleNode, Attribute nextNode, double amount, double step, int id)
         {
@@ -244,6 +229,21 @@ namespace PuzzleGraphGenerator.Models
             }
 
             return amount;
+        }
+
+        public static void BumpPoints(this Graph graph, PuzzleGoal puzzle = null)
+        {
+            puzzle ??= graph.PuzzleStart;
+
+            if (puzzle.Result is null) return;
+
+            foreach (var next in puzzle.Result.NextPuzzles)
+            {
+                var nextNode = graph.GetAttributeNode(next.Id, "y");
+
+                graph.BumpPointNode(puzzle.Id + 1, next.Id, nextNode);
+                graph.BumpPoints(next);
+            }
         }
 
         private static void SortOverlaps(this Graph graph, PuzzleGoal puzzle = null, Dictionary<int, List<(int, int)>> allocated = null, PuzzleGoal start = null)
