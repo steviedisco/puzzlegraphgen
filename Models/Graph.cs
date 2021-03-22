@@ -171,8 +171,8 @@ namespace PuzzleGraphGenerator.Models
             {
                 graph.SortNodes();                
                 graph.SortOverlaps();
-                graph.BumpPoints();
-                // graph.HideNodes();
+                graph.ResetElbows();
+                graph.HideNodes();
             }
 
             return x;
@@ -232,11 +232,9 @@ namespace PuzzleGraphGenerator.Models
             return amount;
         }
 
-        public static void BumpPoints(this Graph graph, PuzzleGoal puzzle = null)
+        public static void ResetElbows(this Graph graph, PuzzleGoal puzzle = null)
         {
             puzzle ??= graph.PuzzleStart;
-
-            Console.WriteLine(puzzle.Title);
 
             if (puzzle.Result is null || puzzle.Sorted) return;
 
@@ -248,7 +246,7 @@ namespace PuzzleGraphGenerator.Models
                 graph.BumpPointNode(puzzle.Id + 1, next.Id);
                 graph.BumpPointNode(puzzle.Id, next.Id);                
 
-                graph.BumpPoints(next);
+                graph.ResetElbows(next);
             }
         }
 
@@ -353,44 +351,22 @@ namespace PuzzleGraphGenerator.Models
             var midPointX = midPoint.Attributes.Where(x => x.Key == "x").First();
             var midPointY = midPoint.Attributes.Where(x => x.Key == "y").First();
 
-            if (int.Parse(nextNodeX.Value) >= int.Parse(startPointX.Value) && int.Parse(midPointX.Value) >= int.Parse(startPointX.Value))
+            if (int.Parse(startPointX.Value) == int.Parse(midPointX.Value))
             {
-                midPointX.Value = nextNodeX.Value;
-
-                if (int.Parse(nextNodeX.Value) == int.Parse(startPointX.Value) && int.Parse(nextNodeY.Value) >= int.Parse(startPointY.Value))
+                if (int.Parse(midPointX.Value) == int.Parse(nextNodeX.Value))
                 {
                     midPointY.Value = (int.Parse(startPointY.Value) + ((int.Parse(nextNodeY.Value) - int.Parse(startPointY.Value)) / 2)).ToString();
                 }
-                else if (int.Parse(nextNodeY.Value) >= int.Parse(startPointY.Value))
-                {
-                    midPointY.Value = startPointY.Value;
-                }
-            } 
-            else if (int.Parse(nextNodeX.Value) >= int.Parse(startPointX.Value) && int.Parse(midPointY.Value) >= int.Parse(startPointY.Value))
-            {
-                midPointX.Value = startPointX.Value;
-
-                if (int.Parse(nextNodeY.Value) >= int.Parse(startPointY.Value))
+                else if (int.Parse(nextNodeX.Value) > int.Parse(midPointX.Value))
                 {
                     midPointY.Value = nextNodeY.Value;
                 }
             }
-            else if (int.Parse(nextNodeX.Value) == int.Parse(startPointX.Value))
+            else if (int.Parse(midPointX.Value) > int.Parse(startPointX.Value))
             {
                 midPointX.Value = nextNodeX.Value;
-                midPointY.Value = (int.Parse(startPointY.Value) + ((int.Parse(nextNodeY.Value) - int.Parse(startPointY.Value)) / 2)).ToString();
+                midPointY.Value = startPointY.Value;
             }
-            else
-            {
-                throw new Exception("wut");
-            }
-
-            // var point = points.Where(x => x.Attributes.Any(y => y.Key == "nextId" && y.Value == targetId.ToString())).FirstOrDefault();
-
-                //if (point != null)
-                //{
-                //    point.Attributes.Where(x => x.Key == "y").First().Value = nextNode.Value;
-                //}
         }
     }
 }
