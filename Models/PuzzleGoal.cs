@@ -21,6 +21,8 @@ namespace PuzzleGraphGenerator.Models
 
         public bool Hidden { get; set; } = false;
 
+        public bool Sorted { get; set; } = false;
+
         public PuzzleGoal(string title, bool hidden = false)
         {
             Title = title;
@@ -34,7 +36,7 @@ namespace PuzzleGraphGenerator.Models
 
         public PuzzleGoal(string title, string solved, List<PuzzleGoal> nextPuzzles, bool hidden = false) : this(title, hidden)
         {
-            Result = new PuzzleResult { PrizeName = solved, NextPuzzles = nextPuzzles };
+            Result = new PuzzleResult { PrizeName = string.Empty, NextPuzzles = nextPuzzles };
         }
     }
 

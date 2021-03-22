@@ -169,9 +169,10 @@ namespace PuzzleGraphGenerator.Models
 
             if (goal == start)
             {
-                graph.SortNodes(start);
-                //graph.BumpPoints(start);
-                //graph.HideNodes(start);
+                graph.SortNodes();                
+                graph.SortOverlaps();
+                graph.BumpPoints();
+                // graph.HideNodes();
             }
 
             return x;
@@ -205,10 +206,10 @@ namespace PuzzleGraphGenerator.Models
             foreach (var next in puzzle.Result.NextPuzzles.Reverse<PuzzleGoal>())
             {
                 var nextNode = graph.GetAttributeNode(next.Id, "y");
-                amount = BumpNode(puzzleNode, nextNode, amount, yStep, next.Id);
+                amount = BumpNode(puzzleNode, nextNode, 0, yStep, next.Id);
 
                 var prizeNode = graph.GetAttributeNode(next.Id + 1, "y");
-                amount = BumpNode(puzzleNode, prizeNode, amount, yStep + (yStep / 2), next.Id + 1);                
+                amount = BumpNode(puzzleNode, prizeNode, 0, yStep + (yStep / 2), next.Id + 1);                
 
                 graph.SortNodes(next, amount);
             }
@@ -235,13 +236,18 @@ namespace PuzzleGraphGenerator.Models
         {
             puzzle ??= graph.PuzzleStart;
 
-            if (puzzle.Result is null) return;
+            Console.WriteLine(puzzle.Title);
+
+            if (puzzle.Result is null || puzzle.Sorted) return;
 
             foreach (var next in puzzle.Result.NextPuzzles)
             {
-                var nextNode = graph.GetAttributeNode(next.Id, "y");
+                puzzle.Sorted = true;
 
-                graph.BumpPointNode(puzzle.Id + 1, next.Id, nextNode);
+                graph.BumpPointNode(puzzle.Id, puzzle.Id + 1);
+                graph.BumpPointNode(puzzle.Id + 1, next.Id);
+                graph.BumpPointNode(puzzle.Id, next.Id);                
+
                 graph.BumpPoints(next);
             }
         }
@@ -254,7 +260,7 @@ namespace PuzzleGraphGenerator.Models
 
             if (puzzle.Result is null) return;
 
-            foreach (var next in puzzle.Result.NextPuzzles)
+            foreach (var next in puzzle.Result.NextPuzzles.Reverse<PuzzleGoal>())
             {
                 foreach (var edge in graph.Sections.Where(x => x is Edge && 
                     x.Attributes.Where(y => y.Key == "source" && y.Value == (puzzle.Id + 1).ToString()).Any() &&
@@ -266,7 +272,7 @@ namespace PuzzleGraphGenerator.Models
                         {
                             var points = line.Sections.Where(x => x is Point).Select(x => x as Point).ToList();
 
-                            if (points.Count() < 3) continue;
+                            if (points.Count < 3) continue;
 
                             var x1 = int.Parse(points[1].Attributes.Where(x => x.Key == "x").First().Value);
                             var y1 = int.Parse(points[1].Attributes.Where(x => x.Key == "y").First().Value);
@@ -280,10 +286,10 @@ namespace PuzzleGraphGenerator.Models
                                     var puzzleNode = graph.GetAttributeNode(puzzle.Id, "y");
                                     var nextNode = graph.GetAttributeNode(next.Id, "y");
 
-                                    var amount = (int)BumpNode(puzzleNode, nextNode, yStep, yStep, next.Id);
+                                    var amount = (int)BumpNode(puzzleNode, nextNode, 0, yStep, next.Id);
 
                                     var prizeNode = graph.GetAttributeNode(next.Id + 1, "y");
-                                    amount = (int)BumpNode(puzzleNode, prizeNode, amount, yStep + (yStep / 2), next.Id + 1);
+                                    amount = (int)BumpNode(puzzleNode, prizeNode, 0, yStep + (yStep / 2), next.Id + 1);
 
                                     if (allocated.ContainsKey(y1 + amount))
                                     {
@@ -293,8 +299,6 @@ namespace PuzzleGraphGenerator.Models
                                     {
                                         allocated.Add(y1 + amount, new List<(int, int)>() { (x1, x2) });
                                     }
-
-                                    graph.SortNodes(next, amount);
                                 }
                                 else
                                 {
@@ -305,8 +309,6 @@ namespace PuzzleGraphGenerator.Models
                             {
                                 allocated.Add(y1, new List<(int, int)>() { (x1, x2) });
                             }
-
-                            graph.BumpPoints(start);
                         }
                     }
                 }
@@ -326,26 +328,69 @@ namespace PuzzleGraphGenerator.Models
             return graphic.Attributes.Where(x => x.Key == key).FirstOrDefault();
         }
 
-        private static void BumpPointNode(this Graph graph, int sourceId, int targetId, Attribute nextNode)
+        private static void BumpPointNode(this Graph graph, int sourceId, int targetId)
         {
-            var edge = graph.Sections.Where(x => x.Attributes.Where(y => y.Key == "source" && y.Value == sourceId.ToString()).Any()).FirstOrDefault() as Edge;
-            if (edge is null) return;
+            if (graph.Sections.Where(x => x.Attributes.Where(y => y.Key == "id" && y.Value == sourceId.ToString()).Any()).FirstOrDefault() is not Node startNode) return;
 
-            var graphic = edge.Sections.Where(x => x is EdgeGraphics).FirstOrDefault() as EdgeGraphics;
-            if (graphic is null) return;
+            var source = graph.Sections.Where(x => x.Attributes.Where(y => y.Key == "source" && y.Value == sourceId.ToString()).Any()).ToList();
 
-            var line = graphic.Sections.Where(x => x is Line).FirstOrDefault() as Line;
-            if (line is null) return;
+            if (source.Where(x => x.Attributes.Where(y => y.Key == "target" && y.Value == targetId.ToString()).Any()).FirstOrDefault() is not Edge edge) return;
+
+            if (edge.Sections.Where(x => x is EdgeGraphics).FirstOrDefault() is not EdgeGraphics graphic) return;
+
+            if (graphic.Sections.Where(x => x is Line).FirstOrDefault() is not Line line) return;
+
+            if (graph.GetAttributeNode(targetId, "x") is not Attribute nextNodeX) return;
+            if (graph.GetAttributeNode(targetId, "y") is not Attribute nextNodeY) return;
 
             var points = line.Sections.Where(x => x is Point).Select(x => x as Point).ToList();
             if (!points.Any()) return;
 
-            var point = points.Where(x => x.Attributes.Any(y => y.Key == "nextId" && y.Value == targetId.ToString())).FirstOrDefault();
+            if (graph.GetAttributeNode(sourceId, "x") is not Attribute startPointX) return;
+            if (graph.GetAttributeNode(sourceId, "y") is not Attribute startPointY) return;
 
-            if (point != null)
+            var midPoint = points[1];
+            var midPointX = midPoint.Attributes.Where(x => x.Key == "x").First();
+            var midPointY = midPoint.Attributes.Where(x => x.Key == "y").First();
+
+            if (int.Parse(nextNodeX.Value) >= int.Parse(startPointX.Value) && int.Parse(midPointX.Value) >= int.Parse(startPointX.Value))
             {
-                point.Attributes.Where(x => x.Key == "y").First().Value = nextNode.Value;
+                midPointX.Value = nextNodeX.Value;
+
+                if (int.Parse(nextNodeX.Value) == int.Parse(startPointX.Value) && int.Parse(nextNodeY.Value) >= int.Parse(startPointY.Value))
+                {
+                    midPointY.Value = (int.Parse(startPointY.Value) + ((int.Parse(nextNodeY.Value) - int.Parse(startPointY.Value)) / 2)).ToString();
+                }
+                else if (int.Parse(nextNodeY.Value) >= int.Parse(startPointY.Value))
+                {
+                    midPointY.Value = startPointY.Value;
+                }
+            } 
+            else if (int.Parse(nextNodeX.Value) >= int.Parse(startPointX.Value) && int.Parse(midPointY.Value) >= int.Parse(startPointY.Value))
+            {
+                midPointX.Value = startPointX.Value;
+
+                if (int.Parse(nextNodeY.Value) >= int.Parse(startPointY.Value))
+                {
+                    midPointY.Value = nextNodeY.Value;
+                }
             }
+            else if (int.Parse(nextNodeX.Value) == int.Parse(startPointX.Value))
+            {
+                midPointX.Value = nextNodeX.Value;
+                midPointY.Value = (int.Parse(startPointY.Value) + ((int.Parse(nextNodeY.Value) - int.Parse(startPointY.Value)) / 2)).ToString();
+            }
+            else
+            {
+                throw new Exception("wut");
+            }
+
+            // var point = points.Where(x => x.Attributes.Any(y => y.Key == "nextId" && y.Value == targetId.ToString())).FirstOrDefault();
+
+                //if (point != null)
+                //{
+                //    point.Attributes.Where(x => x.Key == "y").First().Value = nextNode.Value;
+                //}
         }
     }
 }

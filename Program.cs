@@ -294,7 +294,10 @@ namespace PuzzleGraphGenerator
 
             var activateLightBridge = new PuzzleGoal("Activate light bridge", "Light bridge", completeEnergyLines);
 
-            var completeAlcove = new PuzzleGoal("Complete alcove", "Access cathedral spire", new List<PuzzleGoal> { persuadeCreature, activateLightBridge });
+            var accessCathedralSpire1 = new PuzzleGoal("Access cathedral spire", "Access cathedral spire", persuadeCreature, hidden: true);
+            var accessCathedralSpire2 = new PuzzleGoal("Access cathedral spire", "Access cathedral spire", activateLightBridge, hidden: true);
+
+            var completeAlcove = new PuzzleGoal("Complete alcove", "", new List<PuzzleGoal> { accessCathedralSpire1, accessCathedralSpire2 });
 
             var freeBrink = new PuzzleGoal("Free brink", "Brink freed", completeAlcove);
 
@@ -347,7 +350,7 @@ namespace PuzzleGraphGenerator
             var fixOpenDoor2 = new PuzzleGoal("", "Plate", collectFourPlates, hidden: true);
             var fixOpenDoor3 = new PuzzleGoal("", "Green rod", openMishapedDoor, hidden: true);
 
-            var fixOpenDoor = new PuzzleGoal("Fix/Open door", "Plate", new List<PuzzleGoal> { fixOpenDoor1, fixOpenDoor2, fixOpenDoor3 });
+            var fixOpenDoor = new PuzzleGoal("Fix/Open door", "", new List<PuzzleGoal> { fixOpenDoor1, fixOpenDoor2, fixOpenDoor3 });
 
             var findRatsLair = new PuzzleGoal("Find rat's lair", "Door piece", fixOpenDoor);
 
@@ -382,7 +385,7 @@ namespace PuzzleGraphGenerator
             var jumpGap6 = new PuzzleGoal("", "Trap parts", fashionTrap, hidden: true);
             var jumpGap7 = new PuzzleGoal("", "Access lightbridge", activateLightBridge3, hidden: true);
 
-            var jumpGap = new PuzzleGoal("Jump gap", "Panel cover", new List<PuzzleGoal> { jumpGap1, jumpGap2, jumpGap3, jumpGap4, jumpGap5, jumpGap6, jumpGap7 });
+            var jumpGap = new PuzzleGoal("Jump gap", "", new List<PuzzleGoal> { jumpGap1, jumpGap2, jumpGap3, jumpGap4, jumpGap5, jumpGap6, jumpGap7 });
 
             var openDiamondDoor = new PuzzleGoal("Open diamond door", "Access planetarium spire", jumpGap);
 
