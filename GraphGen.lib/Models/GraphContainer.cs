@@ -1,5 +1,9 @@
-﻿using System;
+﻿using PuzzleGraphGenerator.Helpers;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace PuzzleGraphGenerator.Models
@@ -8,6 +12,11 @@ namespace PuzzleGraphGenerator.Models
     [Serializable]
     public class GraphContainer : Section
     {
+        private const int _maxBranches = 3;
+        private const int _maxDepth = 4;
+
+        private static Random _rng = new Random();
+
         private GraphContainer()
         {
             Name = "xgml";
@@ -28,9 +37,79 @@ namespace PuzzleGraphGenerator.Models
 
         public static GraphContainer Generate(int seed = -1)
         {
-            seed = seed > -1 ? seed : new Random().Next();
+            seed = seed > -1 ? seed : new Random((int)System.DateTime.Now.Ticks).Next();
 
-            return GraphContainer.Create();
+            _rng = new Random(seed);
+
+            // always have an end node
+            var end = new PuzzleGoal("End Game");
+            var last = new PuzzleGoal("Last puzzle", "", end);
+
+            var (_, topPuzzles) = GenerateGoals(last);
+
+            var first = new PuzzleGoal("First puzzle", "", topPuzzles);
+
+            var start = new PuzzleStart(first);
+
+            var container = Create();
+            var graph = container.CreateGraph(start);
+
+            graph.Plot();
+
+            return container;
+        }
+
+        public static string GenerateXML(int seed = -1)
+        {
+            var graph = Generate(seed);
+            var serializer = new XmlSerializer(typeof(GraphContainer));
+
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            using var ms = new MemoryStream();
+            var writer = new NoTypeXmlWriter(ms, CodePagesEncodingProvider.Instance.GetEncoding(1252))
+            {
+                Formatting = Formatting.Indented,
+                Indentation = 4,
+                IndentChar = ' '
+            };
+
+            serializer.Serialize(writer, graph);
+            writer.Close();
+
+            return Encoding.UTF8.GetString(ms.ToArray());
+        }
+
+        private static Tuple<List<PuzzleGoal>, List<PuzzleGoal>> GenerateGoals(PuzzleGoal nextPuzzle, int depth = 1, List<PuzzleGoal> bottomPuzzles = null, List<PuzzleGoal> topPuzzles = null)
+        {
+            bottomPuzzles ??= new List<PuzzleGoal>();
+            topPuzzles ??= new List<PuzzleGoal>();
+
+            if (depth > _maxDepth)
+            {
+                return new Tuple<List<PuzzleGoal>, List<PuzzleGoal>>(bottomPuzzles, topPuzzles);
+            }
+
+            var branches = _rng.Next(1, _maxBranches);
+
+            for (var branch = 1; branch <= branches; branch++)
+            {
+                var puzzle = new PuzzleGoal("Puzzle", "Item", nextPuzzle);                
+
+                if (depth == 1)
+                {
+                    bottomPuzzles.Add(puzzle);
+                }
+                
+                if (depth == _maxDepth)
+                {
+                    topPuzzles.Add(puzzle);
+                }
+
+                (bottomPuzzles, topPuzzles) = GenerateGoals(puzzle, depth + 1, bottomPuzzles, topPuzzles);
+            }            
+
+            return new Tuple<List<PuzzleGoal>, List<PuzzleGoal>>(bottomPuzzles, topPuzzles);
         }
 
         #region dig example

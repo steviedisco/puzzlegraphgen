@@ -9,6 +9,9 @@ namespace PuzzleGraphGenerator.Helpers
 {
     public class NoTypeXmlWriter : XmlTextWriter
     {
+        public NoTypeXmlWriter(MemoryStream ms, Encoding encoding)
+                   : base(ms, encoding) { }
+
         public NoTypeXmlWriter(string filename, Encoding encoding)
                    : base(filename, encoding) { }
 

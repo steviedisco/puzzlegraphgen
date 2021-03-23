@@ -22,8 +22,13 @@ namespace GraphGen.webapi.Controllers
         [HttpGet, Route("/Generate")]
         public GraphContainer Generate(int seed = -1)
         {
-            // return GraphContainer.CreateDigGraph();
             return GraphContainer.Generate(seed);
+        }
+
+        [HttpGet, Route("/GenerateXML")]
+        public string GenerateXML(int seed = -1)
+        {
+            return GraphContainer.GenerateXML(seed);
         }
     }
 }
