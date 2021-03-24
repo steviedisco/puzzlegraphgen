@@ -23,6 +23,8 @@ namespace PuzzleGraphGenerator.Models
 
         public bool Sorted { get; set; } = false;
 
+        public bool Linked { get; set; } = false;
+
         public PuzzleGoal(string title, bool hidden = false)
         {
             Title = title;

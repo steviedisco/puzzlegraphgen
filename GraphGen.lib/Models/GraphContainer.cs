@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -12,8 +13,8 @@ namespace PuzzleGraphGenerator.Models
     [Serializable]
     public class GraphContainer : Section
     {
-        private const int _maxBranches = 3;
-        private const int _maxDepth = 4;
+        private const int _maxBranches = 5;
+        private const int _maxDepth = 5;
 
         private static Random _rng = new Random();
 
@@ -45,9 +46,9 @@ namespace PuzzleGraphGenerator.Models
             var end = new PuzzleGoal("End Game");
             var last = new PuzzleGoal("Last puzzle", "", end);
 
-            var (_, topPuzzles) = GenerateGoals(last);
+            var allPuzzles = GenerateGoals(nextPuzzle: last);
 
-            var first = new PuzzleGoal("First puzzle", "", topPuzzles);
+            var first = new PuzzleGoal("First puzzle", "", allPuzzles[allPuzzles.Count - 1]);
 
             var start = new PuzzleStart(first);
 
@@ -77,39 +78,101 @@ namespace PuzzleGraphGenerator.Models
             serializer.Serialize(writer, graph);
             writer.Close();
 
+            writer = new NoTypeXmlWriter("output.xgml", CodePagesEncodingProvider.Instance.GetEncoding(1252))
+            {
+                Formatting = Formatting.Indented,
+                Indentation = 4,
+                IndentChar = ' '
+            };
+
+            serializer.Serialize(writer, graph);
+            writer.Close();
+
             return Encoding.UTF8.GetString(ms.ToArray());
         }
 
-        private static Tuple<List<PuzzleGoal>, List<PuzzleGoal>> GenerateGoals(PuzzleGoal nextPuzzle, int depth = 1, List<PuzzleGoal> bottomPuzzles = null, List<PuzzleGoal> topPuzzles = null)
+        private static Dictionary<int, List<PuzzleGoal>> GenerateGoals(            
+            int depth = 1,
+            PuzzleGoal nextPuzzle = null,
+            Dictionary<int, List<PuzzleGoal>> allPuzzles = null)
         {
-            bottomPuzzles ??= new List<PuzzleGoal>();
-            topPuzzles ??= new List<PuzzleGoal>();
+            allPuzzles ??= new Dictionary<int, List<PuzzleGoal>>();
 
             if (depth > _maxDepth)
             {
-                return new Tuple<List<PuzzleGoal>, List<PuzzleGoal>>(bottomPuzzles, topPuzzles);
+                return allPuzzles;
+            }
+
+            if (!allPuzzles.ContainsKey(depth))
+            {
+                allPuzzles.Add(depth, new List<PuzzleGoal>());
             }
 
             var branches = _rng.Next(1, _maxBranches);
 
             for (var branch = 1; branch <= branches; branch++)
             {
-                var puzzle = new PuzzleGoal("Puzzle", "Item", nextPuzzle);                
+                PuzzleGoal puzzle;
 
-                if (depth == 1)
+                if (nextPuzzle != null)
                 {
-                    bottomPuzzles.Add(puzzle);
+                    nextPuzzle.Linked = true;
+                    puzzle = new PuzzleGoal("Puzzle", "Item", nextPuzzle);
                 }
-                
-                if (depth == _maxDepth)
+                else
                 {
-                    topPuzzles.Add(puzzle);
-                }
+                    var nextPuzzles = new List<PuzzleGoal>();
 
-                (bottomPuzzles, topPuzzles) = GenerateGoals(puzzle, depth + 1, bottomPuzzles, topPuzzles);
-            }            
+                    if (depth > 1)
+                    {
+                        var pickRandom = _rng.Next(0, 3);
 
-            return new Tuple<List<PuzzleGoal>, List<PuzzleGoal>>(bottomPuzzles, topPuzzles);
+                        if (pickRandom == 0)
+                        {
+                            var randomDepth = _rng.Next(1, depth - 1);
+                            var inBranches = _rng.Next(1, Math.Min(allPuzzles[randomDepth].Count, _maxBranches));
+
+                            for (var inBranch = 0; inBranch < inBranches; inBranch++)
+                            {
+                                var randomPuzzleIndex = _rng.Next(0, allPuzzles[randomDepth].Count - 1);
+
+                                allPuzzles[randomDepth][randomPuzzleIndex].Linked = true;
+                                nextPuzzles.Add(allPuzzles[randomDepth][randomPuzzleIndex]);
+                            }
+                        }                        
+                        else
+                        {
+                            var inBranches = _rng.Next(1, Math.Min(allPuzzles[depth - 1].Count, _maxBranches));
+
+                            for (var inBranch = 0; inBranch < inBranches; inBranch++)
+                            {
+                                var randomPuzzleIndex = _rng.Next(0, allPuzzles[depth - 1].Count - 1);
+
+                                nextPuzzles.Add(allPuzzles[depth - 1][randomPuzzleIndex]);
+                            }
+                        }
+                    }
+
+                    puzzle = new PuzzleGoal("Puzzle", "Item", nextPuzzles);
+                }                
+
+                allPuzzles[depth].Add(puzzle);                
+            }
+
+            allPuzzles = GenerateGoals(depth + 1, allPuzzles: allPuzzles);
+
+            for (var i = depth - 1; i < depth && depth > 1; i++)
+            {
+                var unLinked = allPuzzles[i].Where(x => !x.Linked).ToList();
+
+                foreach (var puzzle in unLinked)
+                {
+                    var randomParent = _rng.Next(0, allPuzzles[depth].Count - 1);
+                    allPuzzles[depth][randomParent].Result.NextPuzzles.Add(puzzle);
+                }                    
+            }
+
+            return allPuzzles;
         }
 
         #region dig example
