@@ -20,15 +20,15 @@ namespace GraphGen.webapi.Controllers
         }
 
         [HttpGet, Route("/Generate")]
-        public GraphContainer Generate(int seed = -1)
+        public GraphContainer Generate(int seed = -1, int maxDepth = 4, int maxBranches = 3)
         {
-            return GraphContainer.Generate(seed);
+            return GraphContainer.Generate(seed, maxDepth, maxBranches);
         }
 
         [HttpGet, Route("/GenerateXML")]
-        public string GenerateXML(int seed = -1)
+        public string GenerateXML(int seed = -1, int maxDepth = 4, int maxBranches = 3)
         {
-            return GraphContainer.GenerateXML(seed);
+            return GraphContainer.GenerateXML(seed, maxDepth, maxBranches);
         }
     }
 }

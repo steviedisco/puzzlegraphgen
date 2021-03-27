@@ -169,11 +169,10 @@ namespace PuzzleGraphGenerator.Models
 
             if (goal == start)
             {
-                graph.SortNodes();
-                graph.SortOverlaps();
-
                 do
                 {
+                    graph.SortNodes();
+                    graph.SortOverlaps();
                     graph.ResetElbows();
                 } while (!graph.CheckNodes());
 
@@ -193,34 +192,129 @@ namespace PuzzleGraphGenerator.Models
             var puzzleNode = graph.GetAttributeNode(puzzle.Id, "y");
 
             // find all nodes on the same y axis value
-            var nodes = graph.GetNodesOnY(int.Parse(puzzleNode.Value));
+            var nodesY = graph.GetNodesOnAxis("y", "x", int.Parse(puzzleNode.Value));
 
             // find any elbows on the same y axis value
-            var elbows = graph.GetElbowsOnY(int.Parse(puzzleNode.Value));
+            var elbowsY = graph.GetElbowsOnAxis("y", "x", int.Parse(puzzleNode.Value));
 
             // see if elbow is to the left of any of them
-            foreach (var elbow in elbows)
+            foreach (var elbow in elbowsY)
             {
                 var elbowX = int.Parse(elbow.Attributes.Where(x => x.Key == "x").First().Value);
+                var elbowY = int.Parse(elbow.Attributes.Where(x => x.Key == "y").First().Value);
+                var target = graph.GetTargetFromElbow(elbowX, elbowY);
 
-                foreach (var node in nodes)
+                foreach (var node in nodesY)
                 {
+                    var id = int.Parse(node.Attributes.Where(x => x.Key == "id").First().Value);
+                    var nextid = int.Parse(elbow.Attributes.Where(x => x.Key == "nextId").First().Value);
                     var nodeX = int.Parse(node.Sections.First().Attributes.Where(x => x.Key == "x").First().Value);
 
-                    if (elbowX <= nodeX)
+                    if (elbowX <= nodeX && id != puzzle.Id)
                     {
-                        ShiftNode(node, yStep);
+                        ShiftNode(node, "y", yStep);
 
-                        // TODO
-                        //var prizeId = graph.GetAttributeNode(int.Parse(node.Attributes.Where(x => x.Key == "id").First().Value) + 1, "y");
-                        //var prizeNode = graph.Sections.Where(x => x.Name == "node" && x.Attributes.Where(y => y.Key == "id" && y.Value == prizeId.Value).Any()).First() as Node;
+                        var prizeId = int.Parse(node.Attributes.Where(x => x.Key == "id").First().Value) + 1;
+                        var prizeNode = graph.Sections.Where(x => x.Name == "node" && x.Attributes.Where(y => y.Key == "id" && y.Value == prizeId.ToString()).Any()).FirstOrDefault() as Node;
 
-                        //ShiftNode(prizeNode, yStep + (yStep / 2));
+                        if (prizeNode != null)
+                        {
+                            ShiftNode(prizeNode, "y", yStep + (yStep / 2));
+
+                            if (int.Parse(node.Sections.First().Attributes.Where(x => x.Key == "y").First().Value) >=
+                                int.Parse(prizeNode.Sections.First().Attributes.Where(x => x.Key == "y").First().Value))
+                            {
+                                prizeNode.Sections.First().Attributes.Where(x => x.Key == "y").First().Value =
+                                    int.Parse(node.Sections.First().Attributes.Where(x => x.Key == "y").First().Value + (yStep / 2)).ToString();
+                            }                            
+                        }
+
+                        var nextNode = graph.Sections.Where(x => x.Name == "node" && x.Attributes.Where(y => y.Key == "id" && y.Value == nextid.ToString()).Any()).FirstOrDefault() as Node;
+
+                        if (nextNode != null)
+                        {
+                            if (prizeNode != null)
+                            {
+                                if (int.Parse(prizeNode.Sections.First().Attributes.Where(x => x.Key == "y").First().Value) >=
+                                    int.Parse(nextNode.Sections.First().Attributes.Where(x => x.Key == "y").First().Value))
+                                {
+                                    nextNode.Sections.First().Attributes.Where(x => x.Key == "y").First().Value =
+                                        (int.Parse(prizeNode.Sections.First().Attributes.Where(x => x.Key == "y").First().Value) + (yStep / 2)).ToString();
+
+                                    var prizeId2 = nextid + 1;
+                                    var prizeNode2 = graph.Sections.Where(x => x.Name == "node" && x.Attributes.Where(y => y.Key == "id" && y.Value == prizeId2.ToString()).Any()).FirstOrDefault() as Node;
+
+                                    if (prizeNode2 != null)
+                                    {
+                                        prizeNode2.Sections.First().Attributes.Where(x => x.Key == "y").First().Value =
+                                            (int.Parse(nextNode.Sections.First().Attributes.Where(x => x.Key == "y").First().Value) + (yStep / 2)).ToString();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (int.Parse(node.Sections.First().Attributes.Where(x => x.Key == "y").First().Value) >=
+                                    int.Parse(nextNode.Sections.First().Attributes.Where(x => x.Key == "y").First().Value))
+                                {
+                                    nextNode.Sections.First().Attributes.Where(x => x.Key == "y").First().Value =
+                                        (int.Parse(node.Sections.First().Attributes.Where(x => x.Key == "y").First().Value) + yStep).ToString();
+
+                                    var prizeId2 = nextid + 1;
+                                    var prizeNode2 = graph.Sections.Where(x => x.Name == "node" && x.Attributes.Where(y => y.Key == "id" && y.Value == prizeId2.ToString()).Any()).FirstOrDefault() as Node;
+
+                                    if (prizeNode2 != null)
+                                    {
+                                        prizeNode2.Sections.First().Attributes.Where(x => x.Key == "y").First().Value =
+                                            (int.Parse(nextNode.Sections.First().Attributes.Where(x => x.Key == "y").First().Value) + (yStep / 2)).ToString();
+                                    }
+                                }
+                            }
+                        }
+
+                        output = false;
+                        break;
                     }
+                    if (!output) break;
                 }
             }
 
-            // if not, bump and return false
+            // find all nodes on the same x axis value
+            var nodesX = graph.GetNodesOnAxis("x", "y", int.Parse(puzzleNode.Value));
+
+            // find any elbows on the same x axis value
+            var elbowsX = graph.GetElbowsOnAxis("x", "y", int.Parse(puzzleNode.Value));
+
+            // see if elbow is to the left of any of them
+            foreach (var elbow in elbowsX)
+            {
+                var elbowX = int.Parse(elbow.Attributes.Where(x => x.Key == "x").First().Value);
+                var elbowY = int.Parse(elbow.Attributes.Where(x => x.Key == "y").First().Value);
+                var target = graph.GetTargetFromElbow(elbowX, elbowY);
+
+                foreach (var node in nodesX)
+                {
+                    var id = int.Parse(node.Attributes.Where(x => x.Key == "id").First().Value);
+                    var nextid = int.Parse(elbow.Attributes.Where(x => x.Key == "nextId").First().Value);
+                    var nodeY = int.Parse(node.Sections.First().Attributes.Where(x => x.Key == "y").First().Value);
+
+                    if (elbowY <= nodeY && nextid != target && id != puzzle.Id)
+                    {
+                        ShiftNode(node, "x", xStep);
+
+                        var prizeId = int.Parse(node.Attributes.Where(x => x.Key == "id").First().Value) + 1;
+                        var prizeNode = graph.Sections.Where(x => x.Name == "node" && x.Attributes.Where(y => y.Key == "id" && y.Value == prizeId.ToString()).Any()).FirstOrDefault() as Node;
+
+                        if (prizeNode != null)
+                        {
+                            ShiftNode(prizeNode, "x", xStep);
+                        }
+
+                        output = false;
+                        break;
+                    }
+                    if (!output) break;
+                }
+            }
 
             foreach (var next in puzzle.Result.NextPuzzles.Reverse<PuzzleGoal>())
             {
@@ -230,36 +324,50 @@ namespace PuzzleGraphGenerator.Models
             return output;
         }
 
-        private static void ShiftNode(Node node, double step)
-        {
-            var yAttribute = node.Sections.Where(x => x.Name == "graphics").First()
-                                 .Attributes.Where(x => x.Key == "y").First();
-
-            yAttribute.Value = (int.Parse(yAttribute.Value) + step).ToString();
+        private static void BumpPrize(Graph graph, Node node, Node nextNode)
+        {            
         }
 
-        private static List<Node> GetNodesOnY(this Graph graph, int yAxis)
+        private static void ShiftNode(Node node, string axis, double step)
         {
-            var sections = graph.Sections.Where(x => x.Name == "node" && (x.Sections.Where(y => y.Name == "graphics").First().Attributes.Where(y => y.Key == "y" && y.Value == yAxis.ToString()).Any())).ToList() as List<Section>;
-            return sections.Select(x => x as Node).ToList();
+            var attribute = node.Sections.Where(x => x.Name == "graphics").First()
+                                 .Attributes.Where(x => x.Key == axis).First();
+
+            attribute.Value = (int.Parse(attribute.Value) + step).ToString();
         }
 
-        private static List<Point> GetElbowsOnY(this Graph graph, int yAxis)
+        private static List<Node> GetNodesOnAxis(this Graph graph, string axis, string sortAxis, int value)
+        {
+            var sections = graph.Sections.Where(x => x.Name == "node" && (x.Sections.Where(y => y.Name == "graphics").First().Attributes.Where(y => y.Key == axis && y.Value == value.ToString()).Any())).ToList() as List<Section>;
+            return sections.Select(x => x as Node).OrderBy(x => x.Sections.First().Attributes.Where(y => y.Key == sortAxis).First().Value).ToList();
+        }
+
+        private static List<Point> GetElbowsOnAxis(this Graph graph, string axis, string sortAxis, int value)
         {
             var output = new List<Point>();
 
             graph.Sections.Where(x => x.Name == "edge").ToList()
                 .ForEach(section => {
-                    var elbow = section.Sections.Where(y => y.Name == "graphics").First()
-                        .Sections.First()
+                    var elbow = section.Sections.First() .Sections.First()
                         .Sections.Where(y => y.Name == "point" &&
                             y.Attributes.Where(z => z.Key == "nextId").Any() &&
-                            y.Attributes.Where(z => z.Key == "y" && z.Value == yAxis.ToString()).Any()).FirstOrDefault() as Point;
+                            y.Attributes.Where(z => z.Key == axis && z.Value == value.ToString()).Any()).FirstOrDefault() as Point;
 
                     if (elbow != null) output.Add(elbow);
                 });                
 
             return output;
+        }
+
+        private static int GetTargetFromElbow(this Graph graph, int xAxis, int yAxis)
+        {
+            var edge = graph.Sections.Where(x => x.Name == "edge").ToList().Where(x =>
+                            x.Sections.First().Sections.First().Sections.Where(y => y.Name == "point" &&
+                            y.Attributes.Where(z => z.Key == "nextId").Any() &&
+                            y.Attributes.Where(z => z.Key == "x" && z.Value == xAxis.ToString()).Any() &&
+                            y.Attributes.Where(z => z.Key == "y" && z.Value == yAxis.ToString()).Any()).Any()).First() as Edge;
+
+            return int.Parse(edge.Attributes.Where(x => x.Key == "target").First().Value);
         }
 
         public static void HideNodes(this Graph graph, PuzzleGoal puzzle = null)
@@ -280,7 +388,7 @@ namespace PuzzleGraphGenerator.Models
             }
         }
 
-        public static void SortNodes(this Graph graph, PuzzleGoal puzzle = null, double amount = 0)
+        public static void SortNodes(this Graph graph, PuzzleGoal puzzle = null)
         {
             puzzle ??= graph.PuzzleStart;
 
@@ -290,41 +398,35 @@ namespace PuzzleGraphGenerator.Models
             foreach (var next in puzzle.Result.NextPuzzles.Reverse<PuzzleGoal>())
             {
                 var nextNode = graph.GetAttributeNode(next.Id, "y");
-                amount = BumpNode(puzzleNode, nextNode, 0, yStep);
-
+                var puzprizeNode = graph.GetAttributeNode(puzzle.Id + 1, "y");
                 var prizeNode = graph.GetAttributeNode(next.Id + 1, "y");
-                amount = BumpNode(puzzleNode, prizeNode, 0, yStep + (yStep / 2));                
 
-                graph.SortNodes(next, amount);
+                BumpNode(puzzleNode, nextNode, 0, yStep, prizeNode != null);                
+                BumpNode(prizeNode, puzprizeNode, 0, yStep + (yStep / 2), prizeNode != null);
+
+                graph.SortNodes(next);
             }
         }        
 
-        private static double BumpNode(Attribute puzzleNode, Attribute nextNode, double amount, double step)
+        private static void BumpNode(Attribute puzzleNode, Attribute nextNode, double amount, double step, bool hasPrize)
         {
-            if (puzzleNode is null || nextNode is null) return amount;
+            if (puzzleNode is null || nextNode is null) return;
 
-            if (int.Parse(puzzleNode.Value) > int.Parse(nextNode.Value))
+            if (int.Parse(puzzleNode.Value) > int.Parse(nextNode.Value) || 
+                (hasPrize && int.Parse(puzzleNode.Value) >= int.Parse(nextNode.Value)))
             {
-                amount = (int.Parse(puzzleNode.Value) - int.Parse(nextNode.Value)) + step;
-            }
-
-            if (amount > 0)
-            {
-                nextNode.Value = (int.Parse(nextNode.Value) + amount).ToString();
-            }
-
-            return amount;
+                nextNode.Value = (int.Parse(puzzleNode.Value) + step).ToString();
+            }            
         }
 
         public static void ResetElbows(this Graph graph, PuzzleGoal puzzle = null)
         {
             puzzle ??= graph.PuzzleStart;
 
-            if (puzzle.Result is null || puzzle.Sorted) return;
+            if (puzzle.Result is null) return;
 
             foreach (var next in puzzle.Result.NextPuzzles)
             {
-                puzzle.Sorted = true;
 
                 graph.BumpPointNode(puzzle.Id, puzzle.Id + 1);
                 graph.BumpPointNode(puzzle.Id + 1, next.Id);
@@ -363,25 +465,25 @@ namespace PuzzleGraphGenerator.Models
 
                             if (allocated.ContainsKey(y1))
                             {
-                                if (x1 != x2 && y1 == y2 && allocated[y2].Any(x => x.Item2 < x2))
+                                if ((x1 != x2 && y1 == y2 && allocated[y2].Any(x => x.Item2 < x2) || 
+                                    (x1 != x2 && y1 == y2 && allocated[y2].Any(x => x.Item1 < y1))))
                                 {
                                     var puzzleNode = graph.GetAttributeNode(puzzle.Id, "y");
                                     var nextNode = graph.GetAttributeNode(next.Id, "y");
-
-                                    var amount = (int)BumpNode(puzzleNode, nextNode, 0, yStep);
-
                                     var prizeNode = graph.GetAttributeNode(next.Id + 1, "y");
-                                    amount = (int)BumpNode(puzzleNode, prizeNode, 0, yStep + (yStep / 2));
 
-                                    if (allocated.ContainsKey(y1 + amount))
+                                    BumpNode(puzzleNode, nextNode, 0, yStep, (prizeNode != null));                                    
+                                    BumpNode(puzzleNode, prizeNode, 0, yStep + (yStep / 2), (prizeNode != null));
+
+                                    if (allocated.ContainsKey(y1 + 0))
                                     {
-                                        allocated[y1 + amount].Add((x1, x2));
+                                        allocated[y1 + 0].Add((x1, x2));
                                     }
                                     else
                                     {
-                                        allocated.Add(y1 + amount, new List<(int, int)>() { (x1, x2) });
+                                        allocated.Add(y1 + 0, new List<(int, int)>() { (x1, x2) });
                                     }
-                                }
+                                }                                
                                 else
                                 {
                                     allocated[y1].Add((x1, x2));
@@ -447,6 +549,11 @@ namespace PuzzleGraphGenerator.Models
                 }
             }
             else if (int.Parse(midPointX.Value) > int.Parse(startPointX.Value))
+            {
+                midPointX.Value = nextNodeX.Value;
+                midPointY.Value = startPointY.Value;
+            }
+            else if (int.Parse(midPointX.Value) < int.Parse(startPointX.Value))
             {
                 midPointX.Value = nextNodeX.Value;
                 midPointY.Value = startPointY.Value;

@@ -13,10 +13,10 @@ namespace PuzzleGraphGenerator.Models
     [Serializable]
     public class GraphContainer : Section
     {
-        private const int _maxBranches = 5;
-        private const int _maxDepth = 5;
-
         private static Random _rng = new Random();
+        private static int _maxBranches = 3;
+        private static int _maxDepth = 4;
+        private static int _puzzleCount = 0;
 
         private GraphContainer()
         {
@@ -36,15 +36,17 @@ namespace PuzzleGraphGenerator.Models
             return AddGraphObject(Graph.Create(puzzleStart)) as Graph;
         }
 
-        public static GraphContainer Generate(int seed = -1)
+        public static GraphContainer Generate(int seed = -1, int maxDepth = 4, int maxBranches = 3)
         {
             seed = seed > -1 ? seed : new Random((int)System.DateTime.Now.Ticks).Next();
+
+            _maxDepth = maxDepth;
+            _maxBranches = maxBranches;
 
             _rng = new Random(seed);
 
             // always have an end node
-            var end = new PuzzleGoal("End Game");
-            var last = new PuzzleGoal("Last puzzle", "", end);
+            var last = new PuzzleGoal("Last Puzzle", "", new List<PuzzleGoal>() { new PuzzleGoal("End Game") });
 
             var allPuzzles = GenerateGoals(nextPuzzle: last);
 
@@ -60,9 +62,11 @@ namespace PuzzleGraphGenerator.Models
             return container;
         }
 
-        public static string GenerateXML(int seed = -1)
+        public static string GenerateXML(int seed = -1, int maxDepth = 4, int maxBranches = 3)
         {
-            var graph = Generate(seed);
+            _puzzleCount = 0;
+
+            var graph = Generate(seed, maxDepth, maxBranches);
             var serializer = new XmlSerializer(typeof(GraphContainer));
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -117,7 +121,7 @@ namespace PuzzleGraphGenerator.Models
                 if (nextPuzzle != null)
                 {
                     nextPuzzle.Linked = true;
-                    puzzle = new PuzzleGoal("Puzzle", "Item", nextPuzzle);
+                    puzzle = new PuzzleGoal($"Puzzle {++_puzzleCount}", $"Item {_puzzleCount}", nextPuzzle);
                 }
                 else
                 {
@@ -148,12 +152,13 @@ namespace PuzzleGraphGenerator.Models
                             {
                                 var randomPuzzleIndex = _rng.Next(0, allPuzzles[depth - 1].Count - 1);
 
+                                allPuzzles[depth - 1][randomPuzzleIndex].Linked = true;
                                 nextPuzzles.Add(allPuzzles[depth - 1][randomPuzzleIndex]);
                             }
                         }
                     }
 
-                    puzzle = new PuzzleGoal("Puzzle", "Item", nextPuzzles);
+                    puzzle = new PuzzleGoal($"Puzzle {++_puzzleCount}", $"Item {_puzzleCount}", nextPuzzles);
                 }                
 
                 allPuzzles[depth].Add(puzzle);                
