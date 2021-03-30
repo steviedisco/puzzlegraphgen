@@ -25,6 +25,8 @@ namespace PuzzleGraphGenerator.Models
 
         public bool Linked { get; set; } = false;
 
+        public bool Shifted { get; set; } = false;
+
         public PuzzleGoal(string title, bool hidden = false)
         {
             Title = title;

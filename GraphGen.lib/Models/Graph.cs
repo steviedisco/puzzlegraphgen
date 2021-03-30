@@ -173,18 +173,20 @@ namespace PuzzleGraphGenerator.Models
                     }
 
                     ////////////////// working on this
-                    var elbowNodes = _plottedPositions[(int)elbow.Item2];
+                    var nodesOnElbowY = _plottedPositions[(int)elbow.Item2];
 
-                    foreach (var elbowNode in elbowNodes)
+                    foreach (var elbowNode in nodesOnElbowY)
                     {
                         var node = _plottedGoals[elbowNode.Value];
 
-                        if (node.Position.Item1 >= currentPosition.Item1 && node.Position.Item1 <= points[points.Count - 1].Item1)
+                        if (node.Position.Item1 > goal.Position.Item1 && node.Position.Item1 < points[points.Count - 1].Item1)
                         {
+                            ResetShifts();
                             graph.ShiftNodes(elbowNode.Value);
                             graph.ResetElbows();
                         }
                     }
+
                     ///////////////////
 
                     if (nextPuzzle.Result == null || string.IsNullOrEmpty(goal.Result.PrizeName)) continue;
@@ -196,7 +198,8 @@ namespace PuzzleGraphGenerator.Models
                         if ((int)currentPosition.Item1 == (int)elbow.Item1)
                         {
                             if (nextPuzzle2.Position.Item2 <= goal.Position.Item2)
-                            {                                
+                            {
+                                ResetShifts();
                                 graph.ShiftNodes(nextPuzzle2.Id);
                                 graph.ResetElbows();
                             }
@@ -204,21 +207,32 @@ namespace PuzzleGraphGenerator.Models
                     }                    
                 }
 
-            }            
+            }
+
+            graph.ResetElbows();
 
             return x;
         }
 
+        public static void ResetShifts()
+        {
+            foreach (var node in _plottedGoals)
+            {
+                node.Value.Shifted = false;
+            }
+        }
+
         public static void ShiftNodes(this Graph graph, int puzzleId)
-        {            
+        {
+            var puzzle = _plottedGoals[puzzleId];
+            if (puzzle.Shifted) return;
+
             var yNode = graph.GetAttributeNode(puzzleId, "y");
             var yPrizeNode = graph.GetAttributeNode(puzzleId + 1, "y");
 
             yNode.Value = (int.Parse(yNode.Value) + yStep).ToString();
 
-            if (yPrizeNode != null) yPrizeNode.Value = (int.Parse(yNode.Value) + yStep + (yStep / 2)).ToString();            
-
-            var puzzle = _plottedGoals[puzzleId];
+            if (yPrizeNode != null) yPrizeNode.Value = (int.Parse(yNode.Value) + yStep + (yStep / 2)).ToString();                        
 
             _plottedPositions[(int)puzzle.Position.Item2].Remove((int)puzzle.Position.Item1);
 
@@ -227,6 +241,8 @@ namespace PuzzleGraphGenerator.Models
             if (!_plottedPositions.ContainsKey((int)puzzle.Position.Item2)) _plottedPositions[(int)puzzle.Position.Item2] = new Dictionary<int, int>();
 
             _plottedPositions[(int)puzzle.Position.Item2][(int)puzzle.Position.Item1] = puzzleId;
+
+            puzzle.Shifted = true;
 
             if (puzzle.Result is null) return;
 
@@ -256,15 +272,15 @@ namespace PuzzleGraphGenerator.Models
             foreach (var next in puzzle.Result.NextPuzzles)
             {
 
-                graph.BumpPointNode(puzzle.Id, puzzle.Id + 1);
-                graph.BumpPointNode(puzzle.Id + 1, next.Id);
-                graph.BumpPointNode(puzzle.Id, next.Id);
+                graph.ResetElbow(puzzle.Id, puzzle.Id + 1);
+                graph.ResetElbow(puzzle.Id + 1, next.Id);
+                graph.ResetElbow(puzzle.Id, next.Id);
 
                 graph.ResetElbows(next);
             }
         }
 
-        private static void BumpPointNode(this Graph graph, int sourceId, int targetId)
+        private static void ResetElbow(this Graph graph, int sourceId, int targetId)
         {
             if (graph.Sections.Where(x => x.Attributes.Where(y => y.Key == "id" && y.Value == sourceId.ToString()).Any()).FirstOrDefault() is not Node startNode) return;
 
