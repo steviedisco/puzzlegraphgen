@@ -45,18 +45,20 @@ namespace PuzzleGraphGenerator.Models
 
             _rng = new Random(seed);
 
-            // always have an end node
+            PuzzleGoal.ResetIdCounter();
+
             var last = new PuzzleGoal("Last Puzzle", "", new List<PuzzleGoal>() { new PuzzleGoal("End Game") });
 
             var allPuzzles = GenerateGoals(nextPuzzle: last);
 
-            var first = new PuzzleGoal("First puzzle", "", allPuzzles[allPuzzles.Count - 1]);
-
+            var first = new PuzzleGoal("First puzzle", "", allPuzzles[allPuzzles.Count]);
             var start = new PuzzleStart(first);
 
             var container = Create();
             var graph = container.CreateGraph(start);
 
+            graph.Position();
+            graph.Sort();
             graph.Plot();
 
             return container;
@@ -384,7 +386,7 @@ namespace PuzzleGraphGenerator.Models
             var container = GraphContainer.Create();
             var graph = container.CreateGraph(start);
 
-            graph.Plot();
+            graph.Position();
 
             return container;
         }

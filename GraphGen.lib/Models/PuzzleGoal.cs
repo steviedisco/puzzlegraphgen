@@ -17,7 +17,7 @@ namespace PuzzleGraphGenerator.Models
 
         public PuzzleResult Result { get; set; }
 
-        public (double, double) Position { get; set; } = (0, 0);
+        public (int, int) Position { get; set; } = (0, 0);
 
         public bool Hidden { get; set; } = false;
 
@@ -41,6 +41,11 @@ namespace PuzzleGraphGenerator.Models
         public PuzzleGoal(string title, string solved, List<PuzzleGoal> nextPuzzles, bool hidden = false) : this(title, hidden)
         {
             Result = new PuzzleResult { PrizeName = string.Empty, NextPuzzles = nextPuzzles };
+        }
+
+        public static void ResetIdCounter()
+        {
+            nextId = 0;
         }
     }
 
