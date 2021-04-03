@@ -59,6 +59,7 @@ namespace PuzzleGraphGenerator.Models
 
             graph.Position();
             graph.Sort();
+            graph.Compress();
             graph.Plot();
 
             return container;
