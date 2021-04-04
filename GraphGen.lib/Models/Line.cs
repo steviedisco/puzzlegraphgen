@@ -25,7 +25,8 @@ namespace PuzzleGraphGenerator.Models
 
             (double, double) output;
 
-            if (points2.Count > 1 && point2index < points2.Count - 1)
+            if (points2.Count > 1 && point2index < points2.Count - 1 &&
+                points2[point2index].Item1 > point1.Item1)
             {
                 output = (points2[point2index].Item1, point1.Item2);                
             }

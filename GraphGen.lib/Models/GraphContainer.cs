@@ -58,8 +58,13 @@ namespace PuzzleGraphGenerator.Models
             var graph = container.CreateGraph(start);
 
             graph.Position();
-            graph.Sort();
-            graph.Compress();
+
+            while(graph.Sort());
+            
+            // graph.SwapX();
+            graph.CompressY();            
+            graph.CompressX();
+            graph.Rename();
             graph.Plot();
 
             return container;

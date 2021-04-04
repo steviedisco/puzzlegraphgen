@@ -26,7 +26,7 @@ namespace GraphGen.webapi.Controllers
         }
 
         [HttpGet, Route("/GenerateXML")]
-        public string GenerateXML(int seed = -1, int maxDepth = 4, int maxBranches = 3)
+        public string GenerateXML(int seed = 50, int maxDepth = 2, int maxBranches = 4)
         {
             return GraphContainer.GenerateXML(seed, maxDepth, maxBranches);
         }
