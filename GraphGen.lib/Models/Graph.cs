@@ -171,6 +171,20 @@ namespace PuzzleGraphGenerator.Models
                                 shifted = true;
                                 graph.ShiftY(nextPuzzle);
                             }
+                        }                        
+                    }
+
+                    if (shifted) break;
+
+                    foreach (var position in _plottedPositions[goal.Position.Item2])
+                    {
+                        if (position.Key > goal.Position.Item1 && position.Key < nextPuzzle.Position.Item1)
+                        {
+                            if (position.Value > 0)
+                            {
+                                shifted = true;
+                                graph.ShiftY(goal);
+                            }
                         }
                     }
                 }

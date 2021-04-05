@@ -17,6 +17,7 @@ namespace PuzzleGraphGenerator.Models
         private static int _maxBranches = 3;
         private static int _maxDepth = 4;
         private static int _puzzleCount = 0;
+        private static int _skipOdds = 5;
 
         private GraphContainer()
         {
@@ -36,12 +37,13 @@ namespace PuzzleGraphGenerator.Models
             return AddGraphObject(Graph.Create(puzzleStart)) as Graph;
         }
 
-        public static GraphContainer Generate(int seed = -1, int maxDepth = 4, int maxBranches = 3)
+        public static GraphContainer Generate(int seed = -1, int maxDepth = 4, int maxBranches = 3, int skipOdds = 5)
         {
             seed = seed > -1 ? seed : new Random((int)System.DateTime.Now.Ticks).Next();
 
             _maxDepth = maxDepth;
             _maxBranches = maxBranches;
+            _skipOdds = skipOdds;
 
             _rng = new Random(seed);
 
@@ -58,28 +60,34 @@ namespace PuzzleGraphGenerator.Models
             var graph = container.CreateGraph(start);
 
             graph.Position();
+            graph.Rename();
 
-            while(graph.Sort());
+            while (graph.Sort());
             
             // graph.SwapX();
             graph.CompressY();            
-            graph.CompressX();
-            graph.Rename();
+            graph.CompressX();            
             graph.Plot();
 
             return container;
         }
 
-        public static string GenerateXML(int seed = -1, int maxDepth = 4, int maxBranches = 3)
+        public static string GenerateXML(int seed = -1, int maxDepth = 4, int maxBranches = 3, int skipOdds = 5)
         {
             _puzzleCount = 0;
 
-            var graph = Generate(seed, maxDepth, maxBranches);
+            var graph = Generate(seed, maxDepth, maxBranches, skipOdds);
+
+            return Serialize(graph);
+        }
+
+        private static string Serialize(GraphContainer graph)
+        {
             var serializer = new XmlSerializer(typeof(GraphContainer));
+            var ms = new MemoryStream();
 
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);            
 
-            using var ms = new MemoryStream();
             var writer = new NoTypeXmlWriter(ms, CodePagesEncodingProvider.Instance.GetEncoding(1252))
             {
                 Formatting = Formatting.Indented,
@@ -137,7 +145,7 @@ namespace PuzzleGraphGenerator.Models
 
                     if (depth > 1)
                     {
-                        var pickRandom = _rng.Next(0, 3);
+                        var pickRandom = _rng.Next(0, _skipOdds);
 
                         if (pickRandom == 0)
                         {
@@ -189,6 +197,14 @@ namespace PuzzleGraphGenerator.Models
         }
 
         #region dig example
+
+        public static string DigExample()
+        {
+            var graph = CreateDigGraph();
+
+            return Serialize(graph);
+        }
+
 
         public static GraphContainer CreateDigGraph()
         {
@@ -393,6 +409,14 @@ namespace PuzzleGraphGenerator.Models
             var graph = container.CreateGraph(start);
 
             graph.Position();
+            graph.Rename();
+
+            while (graph.Sort()) ;
+
+            // graph.SwapX();
+            graph.CompressY();
+            graph.CompressX();
+            graph.Plot();
 
             return container;
         }
