@@ -185,7 +185,7 @@ namespace PuzzleGraphGenerator.Models
 
                     foreach (var position in _plottedPositions[goal.Position.y])
                     {
-                        if (goal.Position.x < 0 && position.Key == nextPuzzle.Position.x && nextPuzzle.Position.y > goal.Position.x)
+                        if (position.Value != goal.Id && position.Key == nextPuzzle.Position.x && nextPuzzle.Position.y > goal.Position.x)
                         {
                             if (position.Value > 0)
                             {
@@ -222,11 +222,11 @@ namespace PuzzleGraphGenerator.Models
                     }
                 }
 
-                if (shifted) break;                
+                if (shifted) break;
 
                 var rows = _plottedPositions.Where(x => x.Key > goal.Position.y && x.Key < nextPuzzle.Position.y).ToList();
 
-                if (rows.Any(row => row.Value.Any(node => node.Key == goal.Position.x)))
+                if (rows.Any(row => row.Value.Any(node => node.Key > 0 && node.Key == goal.Position.x)))
                 {
                     shifted = true;
                     graph.ShiftX(goal);
@@ -252,6 +252,22 @@ namespace PuzzleGraphGenerator.Models
 
                 if (shifted) break;
 
+                shifted = graph.Sort(nextPuzzle);
+            }
+
+            return shifted;
+        }
+
+        public static bool Swap(this Graph graph, PuzzleGoal goal = null)
+        {
+            goal ??= graph.PuzzleStart;
+
+            if (goal.Result == null) return false;
+
+            var swapped = false;
+
+            foreach (var nextPuzzle in goal.Result.NextPuzzles)
+            {
                 if (!goal.Swapped && goal.Position.x != 0)
                 {
                     for (var y = goal.Position.y; y < nextPuzzle.Position.y; y += yStep)
@@ -269,26 +285,26 @@ namespace PuzzleGraphGenerator.Models
                                 {
                                     if (target.Position.y > nextPuzzle.Position.y)
                                     {
-                                        shifted = true;
+                                        swapped = true;
                                         graph.SwapX(goal);
                                         break;
                                     }
                                 }
                             }
 
-                            if (shifted) break;
+                            if (swapped) break;
                         }
 
-                        if (shifted) break;
+                        if (swapped) break;
                     }
                 }
 
-                if (shifted) break;
+                if (swapped) break;
 
-                shifted = graph.Sort(nextPuzzle);
+                swapped = graph.Swap(nextPuzzle);
             }
 
-            return shifted;
+            return swapped;
         }
 
         public static void Rename(this Graph graph, PuzzleGoal goal = null)

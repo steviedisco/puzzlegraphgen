@@ -63,7 +63,8 @@ namespace PuzzleGraphGenerator.Models
             graph.Rename();
 
             while (graph.Sort());
-            
+            while (graph.Swap());
+
             graph.CompressY();
             graph.CompressX();
             graph.CompressX(-1);
@@ -411,7 +412,8 @@ namespace PuzzleGraphGenerator.Models
             graph.Position();
             graph.Rename();
 
-            while (graph.Sort()) ;
+            while (graph.Sort());
+            while (graph.Swap());
 
             graph.CompressY();
             graph.CompressX();
