@@ -17,7 +17,7 @@ namespace PuzzleGraphGenerator.Models
 
         public PuzzleResult Result { get; set; }
 
-        public (int, int) Position { get; set; } = (0, 0);
+        public (int x, int y) Position { get; set; } = (0, 0);
 
         public bool Hidden { get; set; } = false;
 
@@ -28,6 +28,9 @@ namespace PuzzleGraphGenerator.Models
         public bool Shifted { get; set; } = false;
 
         public bool Renamed { get; set; } = false;
+
+        public bool Swapped { get; set; } = false;
+
 
         public PuzzleGoal(string title, bool hidden = false)
         {
@@ -55,7 +58,7 @@ namespace PuzzleGraphGenerator.Models
     {
         public PuzzleStart(PuzzleGoal goal) : base("Start")
         {
-            Result = new PuzzleResult { NextPuzzle = goal };
+            Result = new PuzzleResult { NextPuzzles = new List<PuzzleGoal> { goal } };
         }
 
         public PuzzleStart(List<PuzzleGoal> goals) : base("Start")

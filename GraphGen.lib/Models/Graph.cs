@@ -143,7 +143,7 @@ namespace PuzzleGraphGenerator.Models
 
                 if (!string.IsNullOrEmpty(goal.Result.PrizeName))
                 {
-                    if (nextPuzzle.Position.Item2 <= goal.Position.Item2)
+                    if (nextPuzzle.Position.y <= goal.Position.y)
                     {
                         shifted = true;
                         graph.ShiftY(nextPuzzle);                        
@@ -151,7 +151,7 @@ namespace PuzzleGraphGenerator.Models
                 }
                 else
                 {
-                    if (nextPuzzle.Position.Item2 < goal.Position.Item2)
+                    if (nextPuzzle.Position.y < goal.Position.y)
                     {
                         shifted = true;
                         graph.ShiftY(nextPuzzle);
@@ -162,23 +162,45 @@ namespace PuzzleGraphGenerator.Models
 
                 if (index++ == 0)
                 {
-                    foreach (var position in _plottedPositions[nextPuzzle.Position.Item2])
+                    foreach (var position in _plottedPositions[nextPuzzle.Position.y])
                     {
-                        if (position.Key > nextPuzzle.Position.Item1 && position.Key < goal.Position.Item1)
+                        if (position.Key > nextPuzzle.Position.x && position.Key < goal.Position.x)
                         {
                             if (position.Value > 0)
                             {
                                 shifted = true;
                                 graph.ShiftY(nextPuzzle);
                             }
-                        }                        
+                        } 
+                        else if (position.Key == goal.Position.x && nextPuzzle.Position.x < goal.Position.x)
+                        {
+                            if (position.Value > 0)
+                            {
+                                var node = _plottedGoals[position.Value];
+                                shifted = true;                                
+                                graph.ShiftY(node);
+                            }
+                        }
+                    }
+
+                    foreach (var position in _plottedPositions[goal.Position.y])
+                    {
+                        if (goal.Position.x < 0 && position.Key == nextPuzzle.Position.x && nextPuzzle.Position.y > goal.Position.x)
+                        {
+                            if (position.Value > 0)
+                            {
+                                var node = _plottedGoals[position.Value];
+                                shifted = true;
+                                graph.ShiftY(goal);
+                            }
+                        }
                     }
 
                     if (shifted) break;
 
-                    foreach (var position in _plottedPositions[goal.Position.Item2])
+                    foreach (var position in _plottedPositions[goal.Position.y])
                     {
-                        if (position.Key > goal.Position.Item1 && position.Key < nextPuzzle.Position.Item1)
+                        if (position.Key > goal.Position.x && position.Key < nextPuzzle.Position.x)
                         {
                             if (position.Value > 0)
                             {
@@ -190,9 +212,9 @@ namespace PuzzleGraphGenerator.Models
                 }
                 else
                 {
-                    foreach (var position in _plottedPositions[goal.Position.Item2])
+                    foreach (var position in _plottedPositions[goal.Position.y])
                     {
-                        if (position.Key > nextPuzzle.Position.Item1 && position.Key < goal.Position.Item1)
+                        if (position.Key > nextPuzzle.Position.x && position.Key < goal.Position.x)
                         {
                             shifted = true;
                             graph.ShiftY(goal);
@@ -200,11 +222,11 @@ namespace PuzzleGraphGenerator.Models
                     }
                 }
 
-                if (shifted) break;
+                if (shifted) break;                
 
-                var rows = _plottedPositions.Where(x => x.Key > goal.Position.Item2 && x.Key < nextPuzzle.Position.Item2).ToList();
+                var rows = _plottedPositions.Where(x => x.Key > goal.Position.y && x.Key < nextPuzzle.Position.y).ToList();
 
-                if (rows.Any(row => row.Value.Any(node => node.Key == goal.Position.Item1)))
+                if (rows.Any(row => row.Value.Any(node => node.Key == goal.Position.x)))
                 {
                     shifted = true;
                     graph.ShiftX(goal);
@@ -212,19 +234,52 @@ namespace PuzzleGraphGenerator.Models
 
                 if (shifted) break;
 
-                if (goal.Position.Item1 > nextPuzzle.Position.Item1 && goal.Position.Item2 < nextPuzzle.Position.Item2)
+                if (nextPuzzle.Position.x > 0 && goal.Position.x > nextPuzzle.Position.x && goal.Position.y < nextPuzzle.Position.y)
                 {
-                    var row = _plottedPositions.Where(x => x.Key == nextPuzzle.Position.Item2).FirstOrDefault();
+                    var row = _plottedPositions.Where(x => x.Key == nextPuzzle.Position.y).FirstOrDefault();
 
-                    if (row.Value.ContainsKey(goal.Position.Item1))
+                    if (row.Value.ContainsKey(goal.Position.x))
                     {
-                        var node = _plottedGoals[_plottedPositions[nextPuzzle.Position.Item2][goal.Position.Item1]];
+                        var node = _plottedGoals[_plottedPositions[nextPuzzle.Position.y][goal.Position.x]];
 
                         if (node != nextPuzzle)
                         {
                             shifted = true;
                             graph.ShiftX(node);
                         }
+                    }
+                }
+
+                if (shifted) break;
+
+                if (!goal.Swapped && goal.Position.x != 0)
+                {
+                    for (var y = goal.Position.y; y < nextPuzzle.Position.y; y += yStep)
+                    {
+                        if (!_plottedPositions.ContainsKey(y)) continue;
+
+                        var nodes = _plottedPositions[y].Where(x => x.Key > 0 && x.Key < goal.Position.x && x.Key > nextPuzzle.Position.x).ToList();
+
+                        foreach (var node in nodes)
+                        {
+                            var source = _plottedGoals[node.Value];
+                            if (source.Result != null)
+                            {
+                                foreach (var target in source.Result.NextPuzzles)
+                                {
+                                    if (target.Position.y > nextPuzzle.Position.y)
+                                    {
+                                        shifted = true;
+                                        graph.SwapX(goal);
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (shifted) break;
+                        }
+
+                        if (shifted) break;
                     }
                 }
 
@@ -273,16 +328,16 @@ namespace PuzzleGraphGenerator.Models
                     {
                         var goal = _plottedGoals[id];
 
-                        _plottedPositions[sorted[i]].Remove(goal.Position.Item1);
+                        _plottedPositions[sorted[i]].Remove(goal.Position.x);
 
-                        goal.Position = (goal.Position.Item1, goal.Position.Item2 - yStep);
+                        goal.Position = (goal.Position.x, goal.Position.y - yStep);
 
-                        if (!_plottedPositions.ContainsKey(goal.Position.Item2))
+                        if (!_plottedPositions.ContainsKey(goal.Position.y))
                         {
-                            _plottedPositions.Add(goal.Position.Item2, new Dictionary<int, int>());
+                            _plottedPositions.Add(goal.Position.y, new Dictionary<int, int>());
                         }
 
-                        _plottedPositions[goal.Position.Item2][goal.Position.Item1] = goal.Id;
+                        _plottedPositions[goal.Position.y][goal.Position.x] = goal.Id;
 
                         if (!_plottedPositions[sorted[i]].Any())
                         {
@@ -299,15 +354,14 @@ namespace PuzzleGraphGenerator.Models
             if (removed) graph.CompressY();
         }
 
-
-        public static void CompressX(this Graph graph)
+        public static void CompressX(this Graph graph, int direction = 1)
         {            
             var rows = _plottedPositions.OrderBy(y => y.Key).ToList();
             var compressed = false;
 
             foreach (var row in rows)
             {
-                var sorted = row.Value.Keys.Where(x => x > 0).OrderBy(x => x).ToList();
+                var sorted = row.Value.Keys.Where(x => direction > 0 ? x > 0 : x < 0).OrderBy(x => x).ToList();
 
                 foreach (var column in sorted)
                 {
@@ -315,7 +369,7 @@ namespace PuzzleGraphGenerator.Models
 
                     foreach (var test in rows)
                     {
-                        found = test.Value.ContainsKey(column - xStep);
+                        found = test.Value.ContainsKey(column - (direction * xStep));
                         if (found) break;
                     }
 
@@ -323,11 +377,11 @@ namespace PuzzleGraphGenerator.Models
                     {
                         var goal = _plottedGoals[row.Value[column]];
 
-                        _plottedPositions[goal.Position.Item2].Remove(goal.Position.Item1);
+                        _plottedPositions[goal.Position.y].Remove(goal.Position.x);
 
-                        goal.Position = (goal.Position.Item1 - xStep, goal.Position.Item2);
+                        goal.Position = (goal.Position.x - (direction * xStep), goal.Position.y);
 
-                        _plottedPositions[goal.Position.Item2][goal.Position.Item1] = goal.Id;
+                        _plottedPositions[goal.Position.y][goal.Position.x] = goal.Id;
 
                         compressed = true;
 
@@ -338,57 +392,66 @@ namespace PuzzleGraphGenerator.Models
                 if (compressed) break;
             }
             
-            if (compressed) graph.CompressX();
+            if (compressed) graph.CompressX(direction);
         }
 
-
-        public static void ShiftX(this Graph graph, PuzzleGoal goal = null)
+        public static void SwapX(this Graph graph, PuzzleGoal goal)
         {
-            _plottedPositions[goal.Position.Item2].Remove(goal.Position.Item1);
+            _plottedPositions[goal.Position.y].Remove(goal.Position.x);
+
+            goal.Position = (-goal.Position.x, goal.Position.y);
+
+            _plottedPositions[goal.Position.y][goal.Position.x] = goal.Id;
+
+            goal.Swapped = true;
+        }
+
+        public static void ShiftX(this Graph graph, PuzzleGoal goal)
+        {
+            _plottedPositions[goal.Position.y].Remove(goal.Position.x);
 
             PuzzleGoal existing = null;
 
-            goal.Position = (goal.Position.Item1 + xStep, goal.Position.Item2);
+            goal.Position = (goal.Position.x + xStep, goal.Position.y);
 
-            if (_plottedPositions.ContainsKey(goal.Position.Item2) &&
-                _plottedPositions[goal.Position.Item2].ContainsKey(goal.Position.Item1) &&
-                _plottedPositions[goal.Position.Item2][goal.Position.Item1] > 0)
+            if (_plottedPositions.ContainsKey(goal.Position.y) &&
+                _plottedPositions[goal.Position.y].ContainsKey(goal.Position.x) &&
+                _plottedPositions[goal.Position.y][goal.Position.x] > 0)
             {
-                existing = _plottedGoals[_plottedPositions[goal.Position.Item2][goal.Position.Item1]];
+                existing = _plottedGoals[_plottedPositions[goal.Position.y][goal.Position.x]];
                 graph.ShiftX(existing);
             }
 
-            _plottedPositions[goal.Position.Item2][goal.Position.Item1] = goal.Id;
+            _plottedPositions[goal.Position.y][goal.Position.x] = goal.Id;
         }
 
-
-        public static void ShiftY(this Graph graph, PuzzleGoal goal = null)
+        public static void ShiftY(this Graph graph, PuzzleGoal goal)
         {
-            _plottedPositions[goal.Position.Item2].Remove(goal.Position.Item1);
+            _plottedPositions[goal.Position.y].Remove(goal.Position.x);
 
-            if (!_plottedPositions[goal.Position.Item2].Any())
+            if (!_plottedPositions[goal.Position.y].Any())
             {
-                _plottedPositions.Remove(goal.Position.Item2);
+                _plottedPositions.Remove(goal.Position.y);
             }
 
             PuzzleGoal existing = null;
 
-            goal.Position = (goal.Position.Item1, goal.Position.Item2 + yStep);
+            goal.Position = (goal.Position.x, goal.Position.y + yStep);
 
-            if (_plottedPositions.ContainsKey(goal.Position.Item2) &&
-                _plottedPositions[goal.Position.Item2].ContainsKey(goal.Position.Item1) &&
-                _plottedPositions[goal.Position.Item2][goal.Position.Item1] > 0)
+            if (_plottedPositions.ContainsKey(goal.Position.y) &&
+                _plottedPositions[goal.Position.y].ContainsKey(goal.Position.x) &&
+                _plottedPositions[goal.Position.y][goal.Position.x] > 0)
             {
-                existing = _plottedGoals[_plottedPositions[goal.Position.Item2][goal.Position.Item1]];
+                existing = _plottedGoals[_plottedPositions[goal.Position.y][goal.Position.x]];
                 graph.ShiftY(existing);
             }
 
-            if (!_plottedPositions.ContainsKey(goal.Position.Item2))
+            if (!_plottedPositions.ContainsKey(goal.Position.y))
             {
-                _plottedPositions.Add(goal.Position.Item2, new Dictionary<int, int>());
+                _plottedPositions.Add(goal.Position.y, new Dictionary<int, int>());
             }
 
-            _plottedPositions[goal.Position.Item2][goal.Position.Item1] = goal.Id;
+            _plottedPositions[goal.Position.y][goal.Position.x] = goal.Id;
 
             if (goal.Result == null) return;
 
@@ -410,11 +473,11 @@ namespace PuzzleGraphGenerator.Models
             if (goal.Result == null) return;
 
             var currentId = goal.Id;
-            var currentPosition = goal.Position;            
+            var currentPosition = (goal.Position.x, goal.Position.y);
              
             if (!string.IsNullOrEmpty(goal.Result.PrizeName))
             {
-                currentPosition = (goal.Position.Item1, goal.Position.Item2 + (yStep / 2));
+                currentPosition = (goal.Position.x, goal.Position.y + (yStep / 2));
                 currentId = goal.Id + 1;
 
                 graph.AddNode(currentId, goal.Result.PrizeName)

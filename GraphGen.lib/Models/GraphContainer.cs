@@ -64,9 +64,9 @@ namespace PuzzleGraphGenerator.Models
 
             while (graph.Sort());
             
-            // graph.SwapX();
-            graph.CompressY();            
-            graph.CompressX();            
+            graph.CompressY();
+            graph.CompressX();
+            graph.CompressX(-1);
             graph.Plot();
 
             return container;
@@ -413,9 +413,9 @@ namespace PuzzleGraphGenerator.Models
 
             while (graph.Sort()) ;
 
-            // graph.SwapX();
             graph.CompressY();
             graph.CompressX();
+            graph.CompressX(-1);
             graph.Plot();
 
             return container;

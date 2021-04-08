@@ -22,9 +22,9 @@ namespace PuzzleGraphGenerator.Models
             }
         }
 
-        public static Point Create((double, double) point, int nextId = 0)
+        public static Point Create((double x, double y) point, int nextId = 0)
         {
-            return Create(point.Item1, point.Item2, nextId);
+            return Create(point.x, point.y, nextId);
         }
 
         public static Point Create(double x, double y, int nextId = 0)
