@@ -39,7 +39,7 @@ namespace PuzzleGraphGenerator.Models
 
         public static GraphContainer Generate(int seed = -1, int maxDepth = 4, int maxBranches = 3, int skipOdds = 5)
         {
-            seed = seed > -1 ? seed : new Random((int)System.DateTime.Now.Ticks).Next();
+            seed = seed > -1 ? seed : new Random((int)DateTime.Now.Ticks).Next();
 
             _maxDepth = maxDepth;
             _maxBranches = maxBranches;

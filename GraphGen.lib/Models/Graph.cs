@@ -270,11 +270,11 @@ namespace PuzzleGraphGenerator.Models
             {
                 if (!goal.Swapped && goal.Position.x != 0)
                 {
-                    for (var y = goal.Position.y; y < nextPuzzle.Position.y; y += yStep)
+                    for (var y = 0; y < nextPuzzle.Position.y; y += yStep)
                     {
                         if (!_plottedPositions.ContainsKey(y)) continue;
 
-                        var nodes = _plottedPositions[y].Where(x => x.Key > 0 && x.Key < goal.Position.x && x.Key > nextPuzzle.Position.x).ToList();
+                        var nodes = _plottedPositions[y].Where(x => x.Key >= 0 && x.Key < goal.Position.x).ToList();
 
                         foreach (var node in nodes)
                         {
@@ -297,6 +297,15 @@ namespace PuzzleGraphGenerator.Models
 
                         if (swapped) break;
                     }
+                }
+
+                if (swapped) break;
+
+                if (!nextPuzzle.Swapped && goal.Position.x < 0)
+                {
+                    swapped = true;
+                    graph.SwapX(nextPuzzle);
+                    break;
                 }
 
                 if (swapped) break;
@@ -381,27 +390,38 @@ namespace PuzzleGraphGenerator.Models
 
                 foreach (var column in sorted)
                 {
-                    var found = false;
-
-                    foreach (var test in rows)
-                    {
-                        found = test.Value.ContainsKey(column - (direction * xStep));
-                        if (found) break;
-                    }
+                    var found = row.Value.ContainsKey(column - (direction * xStep));
 
                     if (!found)
                     {
                         var goal = _plottedGoals[row.Value[column]];
 
-                        _plottedPositions[goal.Position.y].Remove(goal.Position.x);
+                        var intersects = false;
+                        var newX = goal.Position.x - (direction * xStep);
 
-                        goal.Position = (goal.Position.x - (direction * xStep), goal.Position.y);
+                        if (goal.Result != null)
+                        {
+                            foreach (var node in _plottedGoals)
+                            {
+                                intersects = (node.Value.Position.x == newX &&
+                                              node.Value.Position.y < goal.Position.y &&
+                                              node.Value.Result.NextPuzzles.Any(x => x.Position.x == newX && x.Position.y > goal.Position.y));
 
-                        _plottedPositions[goal.Position.y][goal.Position.x] = goal.Id;
+                                if (intersects) break;
+                            }
+                        }
 
-                        compressed = true;
+                        if (!intersects)
+                        {
+                            _plottedPositions[goal.Position.y].Remove(goal.Position.x);
 
-                        break;
+                            goal.Position = (newX, goal.Position.y);
+
+                            _plottedPositions[goal.Position.y][goal.Position.x] = goal.Id;
+
+                            compressed = true;
+                            break;
+                        }                                                
                     }
                 }
 
