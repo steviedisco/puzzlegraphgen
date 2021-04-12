@@ -22,13 +22,35 @@ namespace GraphGen.webapi.Controllers
         [HttpGet, Route("/Generate")]
         public GraphContainer Generate(int seed = -1, int maxDepth = 4, int maxBranches = 3, int skipOdds = 5)
         {
-            return GraphContainer.Generate(seed, maxDepth, maxBranches, skipOdds);
+            return GraphContainer.Generate(new GenerateParameters
+            {
+                Seed = seed,
+                MaxDepth = maxDepth,
+                MaxBranches = maxBranches,
+                SkipOdds = skipOdds
+            });
         }
 
         [HttpGet, Route("/GenerateXML")]
-        public string GenerateXML(int seed = 50, int maxDepth = 2, int maxBranches = 4, int skipOdds = 8)
+        public string GenerateXML(int seed = 50, int maxDepth = 2, int maxBranches = 4, int skipOdds = 8,
+                                  bool doSort = true, bool doSwap = true, bool doCompressX = true, bool doCompressY = true)
         {
-            return GraphContainer.GenerateXML(seed, maxDepth, maxBranches, skipOdds);
+            return GraphContainer.GenerateXML(new GenerateParameters { 
+                Seed = seed,
+                MaxDepth = maxDepth,
+                MaxBranches = maxBranches,
+                SkipOdds = skipOdds,
+                DoSort = doSort,
+                DoSwap = doSwap,
+                DoCompressX = doCompressX,
+                DoCompressY = doCompressY
+            });
+        }
+
+        [HttpPost, Route("/GenerateXML")]
+        public string GenerateXML(GenerateParameters parameters)
+        {
+            return GraphContainer.GenerateXML(parameters);
         }
 
         [HttpGet, Route("/DigExample")]

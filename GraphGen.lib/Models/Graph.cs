@@ -270,6 +270,39 @@ namespace PuzzleGraphGenerator.Models
             {
                 if (!goal.Swapped && goal.Position.x != 0)
                 {
+                    var swappable = false;
+
+                    foreach (var node in _plottedGoals.Select(x => x.Value))
+                    {
+                        if (node.Result == null) continue;
+
+                        foreach (var result in node.Result.NextPuzzles)
+                        {
+                            if (result == goal && node.Position.x == 0)
+                            {
+                                swappable = true;
+                            }
+                        }
+                    }
+
+                    if (!swappable) continue;
+
+                    foreach (var node in _plottedGoals.Select(x => x.Value))
+                    {
+                        var intersects = (node.Position.x == goal.Position.x &&
+                                          node.Position.y > goal.Position.y &&
+                                          goal.Result.NextPuzzles.Any(x => x.Position.x < node.Position.x && x.Position.y > node.Position.y));
+
+                        if (intersects)
+                        {
+                            swapped = true;
+                            graph.SwapX(goal);
+                            break;
+                        }
+                    }
+
+                    if (swapped) break;
+
                     for (var y = 0; y < nextPuzzle.Position.y; y += yStep)
                     {
                         if (!_plottedPositions.ContainsKey(y)) continue;
@@ -442,20 +475,20 @@ namespace PuzzleGraphGenerator.Models
             goal.Swapped = true;
         }
 
-        public static void ShiftX(this Graph graph, PuzzleGoal goal)
+        public static void ShiftX(this Graph graph, PuzzleGoal goal, int direction = 1)
         {
             _plottedPositions[goal.Position.y].Remove(goal.Position.x);
 
-            PuzzleGoal existing = null;
+            var newX = goal.Position.x + (direction * xStep);
 
-            goal.Position = (goal.Position.x + xStep, goal.Position.y);
+            goal.Position = (newX, goal.Position.y);
 
             if (_plottedPositions.ContainsKey(goal.Position.y) &&
                 _plottedPositions[goal.Position.y].ContainsKey(goal.Position.x) &&
                 _plottedPositions[goal.Position.y][goal.Position.x] > 0)
             {
-                existing = _plottedGoals[_plottedPositions[goal.Position.y][goal.Position.x]];
-                graph.ShiftX(existing);
+                var existing = _plottedGoals[_plottedPositions[goal.Position.y][goal.Position.x]];
+                graph.ShiftX(existing, direction);
             }
 
             _plottedPositions[goal.Position.y][goal.Position.x] = goal.Id;

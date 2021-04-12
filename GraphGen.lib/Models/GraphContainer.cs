@@ -37,15 +37,15 @@ namespace PuzzleGraphGenerator.Models
             return AddGraphObject(Graph.Create(puzzleStart)) as Graph;
         }
 
-        public static GraphContainer Generate(int seed = -1, int maxDepth = 4, int maxBranches = 3, int skipOdds = 5)
+        public static GraphContainer Generate(GenerateParameters parameters)
         {
-            seed = seed > -1 ? seed : new Random((int)DateTime.Now.Ticks).Next();
+            parameters.Seed = parameters.Seed > -1 ? parameters.Seed : new Random((int)DateTime.Now.Ticks).Next();
 
-            _maxDepth = maxDepth;
-            _maxBranches = maxBranches;
-            _skipOdds = skipOdds;
+            _maxDepth = parameters.MaxDepth;
+            _maxBranches = parameters.MaxBranches;
+            _skipOdds = parameters.SkipOdds;
 
-            _rng = new Random(seed);
+            _rng = new Random(parameters.Seed);
 
             PuzzleGoal.ResetIdCounter();
 
@@ -62,22 +62,33 @@ namespace PuzzleGraphGenerator.Models
             graph.Position();
             graph.Rename();
 
-            while (graph.Sort());
-            while (graph.Swap());
+            if (parameters.DoSort) while (graph.Sort());
 
-            graph.CompressY();
-            graph.CompressX();
-            graph.CompressX(-1);
+            if (parameters.DoCompressX) graph.CompressX();
+            if (parameters.DoCompressX) graph.CompressX(-1);
+            if (parameters.DoCompressY) graph.CompressY();
+
+            if (parameters.DoSwap) while (graph.Swap());
+
+            if (parameters.DoCompressX) graph.CompressX();
+            if (parameters.DoCompressX) graph.CompressX(-1);
+
+            if (parameters.DoSort) while (graph.Sort()) ;
+
+            if (parameters.DoCompressX) graph.CompressX();
+            if (parameters.DoCompressX) graph.CompressX(-1);
+            if (parameters.DoCompressY) graph.CompressY();
+
             graph.Plot();
 
             return container;
         }
 
-        public static string GenerateXML(int seed = -1, int maxDepth = 4, int maxBranches = 3, int skipOdds = 5)
+        public static string GenerateXML(GenerateParameters parameters)
         {
             _puzzleCount = 0;
 
-            var graph = Generate(seed, maxDepth, maxBranches, skipOdds);
+            var graph = Generate(parameters);
 
             return Serialize(graph);
         }
@@ -424,5 +435,17 @@ namespace PuzzleGraphGenerator.Models
         }
 
         #endregion 
+    }
+
+    public class GenerateParameters
+    {
+        public int Seed { get; set; } = -1;
+        public int MaxDepth { get; set; } = 4;
+        public int MaxBranches { get; set; } = 3;
+        public int SkipOdds { get; set; } = 5;
+        public bool DoSort { get; set; } = true;
+        public bool DoSwap { get; set; } = true;
+        public bool DoCompressX { get; set; } = true;
+        public bool DoCompressY { get; set; } = true;
     }
 }
