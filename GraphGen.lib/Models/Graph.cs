@@ -407,6 +407,43 @@ namespace PuzzleGraphGenerator.Models
 
                     if (removed) break;
                 }
+                else if (diff == yStep)
+                {
+                    var newY = sorted[i - 1];
+                    var row = _plottedPositions[sorted[i]];
+
+                    foreach (var id in row.Values)
+                    {
+                        var goal = _plottedGoals[id];
+                        var parents = _plottedGoals.Select(x => x.Value).Where(x => x.Result != null && x.Result.NextPuzzles.Any(y => y == goal)).ToList();
+
+                        if (_plottedPositions.ContainsKey(newY) &&
+                            (!_plottedPositions[newY].ContainsKey(goal.Position.x)) && 
+                            (goal.Result != null && goal.Result.NextPuzzles.Count <= 1) &&
+                            !parents.Any(x => x.Position.y >= newY))
+                        {
+                            _plottedPositions[sorted[i]].Remove(goal.Position.x);
+
+                            goal.Position = (goal.Position.x, goal.Position.y - yStep);
+
+                            if (!_plottedPositions.ContainsKey(goal.Position.y))
+                            {
+                                _plottedPositions.Add(goal.Position.y, new Dictionary<int, int>());
+                            }
+
+                            _plottedPositions[goal.Position.y][goal.Position.x] = goal.Id;
+
+                            if (!_plottedPositions[sorted[i]].Any())
+                            {
+                                _plottedPositions.Remove(sorted[i]);
+                                removed = true;
+                                break;
+                            }
+                        }
+
+                        if (removed) break;
+                    }                    
+                }
             }
 
             if (removed) graph.CompressY();

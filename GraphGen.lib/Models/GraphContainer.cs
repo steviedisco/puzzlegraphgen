@@ -66,8 +66,7 @@ namespace PuzzleGraphGenerator.Models
 
             if (parameters.DoCompressX) graph.CompressX();
             if (parameters.DoCompressX) graph.CompressX(-1);
-            if (parameters.DoCompressY) graph.CompressY();
-
+            
             if (parameters.DoSwap) while (graph.Swap());
 
             if (parameters.DoCompressX) graph.CompressX();
