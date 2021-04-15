@@ -73,10 +73,11 @@ namespace PuzzleGraphGenerator.Models
             if (parameters.DoCompressX) graph.CompressX();
             if (parameters.DoCompressX) graph.CompressX(-1);
 
-            if (parameters.DoSort) while (graph.Sort()) ;
+            if (parameters.DoSort) while (graph.Sort(direction: -1));
+            if (parameters.DoSort) while (graph.Sort());
 
-            if (parameters.DoCompressX) graph.CompressX();
-            if (parameters.DoCompressX) graph.CompressX(-1);
+            //if (parameters.DoCompressX) graph.CompressX();
+            //if (parameters.DoCompressX) graph.CompressX(-1);
             if (parameters.DoCompressY) graph.CompressY();
 
             graph.Plot();

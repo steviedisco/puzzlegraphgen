@@ -129,7 +129,7 @@ namespace PuzzleGraphGenerator.Models
             }            
         }
 
-        public static bool Sort(this Graph graph, PuzzleGoal goal = null)
+        public static bool Sort(this Graph graph, PuzzleGoal goal = null, int direction = 1)
         {
             goal ??= graph.PuzzleStart;
 
@@ -226,15 +226,15 @@ namespace PuzzleGraphGenerator.Models
 
                 var rows = _plottedPositions.Where(x => x.Key > goal.Position.y && x.Key < nextPuzzle.Position.y).ToList();
 
-                if (rows.Any(row => row.Value.Any(node => node.Key > 0 && node.Key == goal.Position.x)))
+                if (rows.Any(row => row.Value.Any(node => (node.Key * direction) > 0 && node.Key == goal.Position.x)))
                 {
                     shifted = true;
-                    graph.ShiftX(goal);
+                    graph.ShiftX(goal, direction);
                 }
 
                 if (shifted) break;
 
-                if (nextPuzzle.Position.x > 0 && goal.Position.x > nextPuzzle.Position.x && goal.Position.y < nextPuzzle.Position.y)
+                if ((nextPuzzle.Position.x * direction) > 0 && (goal.Position.x * direction) > (nextPuzzle.Position.x * direction) && goal.Position.y < nextPuzzle.Position.y)
                 {
                     var row = _plottedPositions.Where(x => x.Key == nextPuzzle.Position.y).FirstOrDefault();
 
@@ -245,14 +245,14 @@ namespace PuzzleGraphGenerator.Models
                         if (node != nextPuzzle)
                         {
                             shifted = true;
-                            graph.ShiftX(node);
+                            graph.ShiftX(node, direction);
                         }
                     }
                 }
 
                 if (shifted) break;
 
-                shifted = graph.Sort(nextPuzzle);
+                shifted = graph.Sort(nextPuzzle, direction);
             }
 
             return shifted;
