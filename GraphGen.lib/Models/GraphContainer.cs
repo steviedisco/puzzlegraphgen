@@ -62,22 +62,14 @@ namespace PuzzleGraphGenerator.Models
             graph.Position();
             graph.Rename();
 
-            if (parameters.DoSort) while (graph.Sort());
-
-            if (parameters.DoCompressX) graph.CompressX();
-            if (parameters.DoCompressX) graph.CompressX(-1);
-            
+            if (parameters.DoSort) graph.Sort();           
             if (parameters.DoSwap) while (graph.Swap());
+            if (parameters.DoSort) graph.Sort(direction: -1);
+
+            if (parameters.DoCompressY) graph.CompressY();
 
             if (parameters.DoCompressX) graph.CompressX();
-            if (parameters.DoCompressX) graph.CompressX(-1);
-
-            if (parameters.DoSort) while (graph.Sort(direction: -1));
-            if (parameters.DoSort) while (graph.Sort());
-
-            //if (parameters.DoCompressX) graph.CompressX();
-            //if (parameters.DoCompressX) graph.CompressX(-1);
-            if (parameters.DoCompressY) graph.CompressY();
+            if (parameters.DoCompressX) graph.CompressX(direction: -1);            
 
             graph.Plot();
 
@@ -423,7 +415,7 @@ namespace PuzzleGraphGenerator.Models
             graph.Position();
             graph.Rename();
 
-            while (graph.Sort());
+            graph.Sort();
             while (graph.Swap());
 
             graph.CompressY();

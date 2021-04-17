@@ -11,6 +11,7 @@ namespace PuzzleGraphGenerator.Models
         {
             Name = "graphics";
 
+            AddGraphObject(Attribute.Create("smoothBends", "boolean", "true"));
             AddGraphObject(Attribute.Create("fill", "String", "#000000"));
             AddGraphObject(Attribute.Create("targetArrow", "String", "standard"));
         }

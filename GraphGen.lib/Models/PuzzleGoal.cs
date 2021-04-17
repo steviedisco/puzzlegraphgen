@@ -31,6 +31,8 @@ namespace PuzzleGraphGenerator.Models
 
         public bool Swapped { get; set; } = false;
 
+        public bool Plotted { get; set; } = false;
+
 
         public PuzzleGoal(string title, bool hidden = false)
         {
