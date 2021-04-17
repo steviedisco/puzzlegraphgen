@@ -16,6 +16,7 @@ namespace PuzzleGraphGenerator.Models
         private static Random _rng = new Random();
         private static int _maxBranches = 3;
         private static int _maxDepth = 4;
+        private static int _maxIterations = 10;
         private static int _puzzleCount = 0;
         private static int _skipOdds = 5;
 
@@ -43,6 +44,7 @@ namespace PuzzleGraphGenerator.Models
 
             _maxDepth = parameters.MaxDepth;
             _maxBranches = parameters.MaxBranches;
+            _maxIterations = parameters.MaxIterations;
             _skipOdds = parameters.SkipOdds;
 
             _rng = new Random(parameters.Seed);
@@ -62,9 +64,9 @@ namespace PuzzleGraphGenerator.Models
             graph.Position();
             graph.Rename();
 
-            if (parameters.DoSort) graph.Sort();           
-            if (parameters.DoSwap) while (graph.Swap());
-            if (parameters.DoSort) graph.Sort(direction: -1);
+            if (parameters.DoSort) graph.Sort(maxIterations: _maxIterations);           
+            if (parameters.DoSwap) graph.Swap(maxIterations: _maxIterations);
+            if (parameters.DoSort) graph.Sort(maxIterations: _maxIterations, direction: -1);
 
             if (parameters.DoCompressY) graph.CompressY();
 
@@ -415,12 +417,15 @@ namespace PuzzleGraphGenerator.Models
             graph.Position();
             graph.Rename();
 
-            graph.Sort();
-            while (graph.Swap());
+            graph.Sort(maxIterations: 10);
+            graph.Swap(maxIterations: 10);
+            graph.Sort(maxIterations: 10, direction: -1);
 
-            graph.CompressY();
+            graph.DoCompressY();
+
             graph.CompressX();
-            graph.CompressX(-1);
+            graph.CompressX(direction: -1);
+
             graph.Plot();
 
             return container;
@@ -434,6 +439,7 @@ namespace PuzzleGraphGenerator.Models
         public int Seed { get; set; } = -1;
         public int MaxDepth { get; set; } = 4;
         public int MaxBranches { get; set; } = 3;
+        public int MaxIterations { get; set; } = 10;
         public int SkipOdds { get; set; } = 5;
         public bool DoSort { get; set; } = true;
         public bool DoSwap { get; set; } = true;
