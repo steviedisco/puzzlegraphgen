@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Xml.Serialization;
 
@@ -127,7 +128,8 @@ namespace PuzzleGraphGenerator.Models
                         {
                             var intersects = IntersectCheckX(goal, x, node);
 
-                            if (intersects) x += xStep;
+                            if (intersects) 
+                                x += xStep;
                         }
 
                         graph.Position(nextPuzzle, x, y + yStep, start);
@@ -136,176 +138,38 @@ namespace PuzzleGraphGenerator.Models
             }            
         }
 
-        public static void Sort(this Graph graph, int maxIterations = 10, int direction = 1)
+        public static bool Sort(this Graph graph, PuzzleGoal goal = null, int direction = 1)
         {
-            var allSorted = true;
-            var count = 0;
-            do
-            {
-                allSorted = true;
+            goal ??= graph.PuzzleStart;
 
-                foreach (var nextGoal in _plottedGoals.Values)
-                {
-                    allSorted &= !graph.DoSort(nextGoal, direction);
-                    if (!allSorted) break;
-                }
-
-                count++;
-            }
-            while (!allSorted && count < maxIterations);
-        }
-
-        public static bool DoSort(this Graph graph, PuzzleGoal goal = null, int direction = 1)
-        {
             var shifted = false;
 
-            if (goal.Result == null) return false;
+            if (goal.Result == null) 
+                return false;
 
-            foreach (var nextPuzzle in goal.Result.NextPuzzles)
+            foreach (var nextPuzzle in goal.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0))
             {
-                var index = 0;
+                foreach (var node in _plottedGoals.Values)
+                {
+                    if (nextPuzzle.Id == node.Id) continue;
 
-                if (!string.IsNullOrEmpty(goal.Result.PrizeName))
-                {
-                    if (nextPuzzle.Position.y <= goal.Position.y)
-                    {
-                        shifted = true;
-                        graph.ShiftY(nextPuzzle);                        
-                    }
-                }
-                else
-                {
-                    if (nextPuzzle.Position.y < goal.Position.y)
+                    if (IntersectCheckX(nextPuzzle, nextPuzzle.Position.x, node, direction))
                     {
                         shifted = true;
                         graph.ShiftY(nextPuzzle);
+                        break;
+                    }
+
+                    if (IntersectCheckY(nextPuzzle, nextPuzzle.Position.y, node, direction))
+                    {
+                        shifted = true;
+                        graph.ShiftX(nextPuzzle, direction);
+                        break;
                     }
                 }
 
-                if (shifted) break;
-
-                if (index++ == 0)
-                {
-                    foreach (var position in _plottedPositions[nextPuzzle.Position.y])
-                    {
-                        var node = _plottedGoals[position.Value];
-
-                        if (position.Key > nextPuzzle.Position.x && position.Key < goal.Position.x)
-                        {
-                            if (position.Value > 0)
-                            {
-                                shifted = true;
-                                graph.ShiftY(nextPuzzle);
-                            }
-                        } 
-                        else if (position.Key == goal.Position.x && nextPuzzle.Position.x < goal.Position.x)
-                        {
-                            if (position.Value > 0)
-                            {
-                                shifted = true;                                
-                                graph.ShiftY(node);
-                            }
-                        }
-
-                        if (shifted) break;
-                    }
-
-                    if (shifted) break;
-
-                    foreach (var position in _plottedPositions[goal.Position.y])
-                    {
-                        if (position.Value != goal.Id && position.Key == nextPuzzle.Position.x && nextPuzzle.Position.y > goal.Position.x)
-                        {
-                            if (position.Value > 0)
-                            {
-                                var node = _plottedGoals[position.Value];
-                                shifted = true;
-                                graph.ShiftY(goal);
-                            }
-                        }
-
-                        if (shifted) break;
-                    }
-
-                    if (shifted) break;
-
-                    foreach (var position in _plottedPositions[goal.Position.y])
-                    {
-                        if (position.Key > goal.Position.x && position.Key < nextPuzzle.Position.x)
-                        {
-                            if (position.Value > 0)
-                            {
-                                shifted = true;
-                                graph.ShiftY(goal);
-                            }
-                        }
-
-                        if (shifted) break;
-                    }
-
-                    if (shifted) break;
-                }
-                else
-                {
-                    foreach (var position in _plottedPositions[goal.Position.y])
-                    {
-                        if (position.Key > nextPuzzle.Position.x && position.Key < goal.Position.x)
-                        {
-                            shifted = true;
-                            graph.ShiftY(goal);
-                        }
-                    }
-
-                    if (shifted) break;
-                }
-
-                if (shifted) break;
-
-                if (Math.Sign(goal.Position.x) > 0)
-                {
-                    foreach (var node in _plottedGoals.Values.Where(x => Math.Sign(x.Position.x) > 0 && x.Id != goal.Id))
-                    {
-                        var intersects = IntersectCheckX(goal, goal.Position.x, node);
-
-                        if (intersects)
-                        {
-                            shifted = true;
-                            graph.ShiftY(goal);
-                            break;
-                        }
-                    }
-                }                
-
-                if (shifted) break;
-
-                var rows = _plottedPositions.Where(x => x.Key > goal.Position.y && x.Key < nextPuzzle.Position.y).ToList();
-
-                if (rows.Any(row => row.Value.Any(node => (node.Key * direction) > 0 && node.Key == goal.Position.x)))
-                {
-                    shifted = true;
-                    graph.ShiftX(goal, direction);
-                }
-
-                if (shifted) break;
-
-                if ((nextPuzzle.Position.x * direction) > 0 && (goal.Position.x * direction) > (nextPuzzle.Position.x * direction) && goal.Position.y < nextPuzzle.Position.y)
-                {
-                    var row = _plottedPositions.Where(x => x.Key == nextPuzzle.Position.y).FirstOrDefault();
-
-                    if (row.Value.ContainsKey(goal.Position.x))
-                    {
-                        var node = _plottedGoals[_plottedPositions[nextPuzzle.Position.y][goal.Position.x]];
-
-                        if (node != nextPuzzle)
-                        {
-                            shifted = true;
-                            graph.ShiftX(node, direction);
-                        }
-                    }
-                }
-
-                if (shifted) break;                
-            }
+                return graph.Sort(nextPuzzle, direction);
+            }            
 
             return shifted;
         }
@@ -619,44 +483,46 @@ namespace PuzzleGraphGenerator.Models
             while (true);
         }
 
-        private static bool IntersectCheckX(PuzzleGoal goal, int newX, PuzzleGoal node)
+        private static bool IntersectCheckX(PuzzleGoal goal, int newX, PuzzleGoal node, int direction = 1)
         {
             bool intersects = (node.Position.x == newX &&
                                                   node.Position.y == goal.Position.y);
+
+            if (node.Result == null) return intersects;
+
             intersects |= (node.Position.x == newX &&
                           node.Position.y < goal.Position.y &&
-                          node.Result.NextPuzzles.Any(x => x.Position.x == newX && x.Position.y > goal.Position.y));
+                          node.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0).Any(x => x.Position.x == newX && x.Position.y > goal.Position.y));
 
             intersects |= (node.Position.y == goal.Position.y &&
                           node.Position.x > goal.Position.x &&
-                          node.Result.NextPuzzles.Any(x => x.Position.x == newX && x.Position.y > goal.Position.y));
+                          node.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0).Any(x => x.Position.x == newX && x.Position.y < goal.Position.y));
 
             intersects |= (node.Position.x == newX &&
                           node.Position.y < goal.Position.y &&
-                          node.Result.NextPuzzles.Any(x => x.Position.x > newX)); //  && x.Position.y == goal.Position.y
+                          node.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0).Any(x => x.Id != goal.Id && x.Position.y == goal.Position.y && (x.Position.x * direction) < (goal.Position.x * direction)));
 
             return intersects;
         }
 
-        private static bool IntersectCheckY(PuzzleGoal goal, int newY, PuzzleGoal node)
+        private static bool IntersectCheckY(PuzzleGoal goal, int newY, PuzzleGoal node, int direction = 1)
         {
             bool intersects = (node.Position.y == newY &&
                                                   node.Position.x == goal.Position.x);
 
-            if (node.Result != null)
-            {
-                intersects |= (node.Position.y <= newY &&
-                          node.Position.x < goal.Position.x &&
-                          node.Result.NextPuzzles.Any(x => x.Position.y == newY && x.Position.x > goal.Position.x));
+            if (node.Result == null) return intersects;
 
-                intersects |= (node.Position.x == goal.Position.x &&
-                              node.Position.y < goal.Position.y &&
-                              node.Result.NextPuzzles.Any(x => x.Position.y == newY && x.Position.x > goal.Position.x));
+            intersects |= (node.Position.y <= newY &&
+                        node.Position.x < goal.Position.x &&
+                        node.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0).Any(x => x.Position.y == newY && (x.Position.x * direction) > (goal.Position.x * direction)));
 
-                intersects |= (node.Position.y == newY &&
-                              node.Position.x < goal.Position.x &&
-                              node.Result.NextPuzzles.Any(x => x.Position.y > newY && x.Position.x == goal.Position.x));
-            }            
+            intersects |= (node.Position.x == goal.Position.x &&
+                            node.Position.y < goal.Position.y &&
+                            node.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0).Any(x => x.Position.y == newY && (x.Position.x * direction) < (goal.Position.x * direction)));
+
+            intersects |= (node.Position.y == newY &&
+                            node.Position.x < goal.Position.x &&
+                            node.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0).Any(x => x.Position.y > newY && x.Position.x == goal.Position.x));
 
             return intersects;
         }
@@ -674,7 +540,8 @@ namespace PuzzleGraphGenerator.Models
 
         public static void ShiftX(this Graph graph, PuzzleGoal goal, int direction = 1)
         {
-            _plottedPositions[goal.Position.y].Remove(goal.Position.x);
+            if (_plottedPositions.ContainsKey(goal.Position.y))
+                _plottedPositions[goal.Position.y].Remove(goal.Position.x);
 
             var newX = goal.Position.x + (direction * xStep);
 
@@ -695,18 +562,21 @@ namespace PuzzleGraphGenerator.Models
         {
             if (goal == null) return;
 
-            _plottedPositions[goal.Position.y].Remove(goal.Position.x);
-
-            if (!_plottedPositions[goal.Position.y].Any())
+            if (_plottedPositions.ContainsKey(goal.Position.y))
             {
-                _plottedPositions.Remove(goal.Position.y);
+                _plottedPositions[goal.Position.y].Remove(goal.Position.x);
+
+                if (!_plottedPositions[goal.Position.y].Any())
+                {
+                    _plottedPositions.Remove(goal.Position.y);
+                }
             }
 
             PuzzleGoal existing = null;
 
-            var minY = Math.Min(_plottedPositions.Keys.Max() + yStep, goal.Position.y + yStep);
+            var newY = Math.Min(_plottedPositions.Keys.Max(), goal.Position.y) + yStep;
 
-            goal.Position = (goal.Position.x, minY);
+            goal.Position = (goal.Position.x, newY);
 
             if (_plottedPositions.ContainsKey(goal.Position.y) &&
                 _plottedPositions[goal.Position.y].ContainsKey(goal.Position.x) &&

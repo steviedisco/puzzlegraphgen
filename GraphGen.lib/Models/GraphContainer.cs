@@ -64,9 +64,9 @@ namespace PuzzleGraphGenerator.Models
             graph.Position();
             graph.Rename();
 
-            if (parameters.DoSort) graph.Sort(maxIterations: _maxIterations);           
+            if (parameters.DoSort) graph.Sort();           
             if (parameters.DoSwap) graph.Swap(maxIterations: _maxIterations);
-            if (parameters.DoSort) graph.Sort(maxIterations: _maxIterations, direction: -1);
+            if (parameters.DoSort) graph.Sort(direction: -1);
 
             if (parameters.DoCompressY) graph.CompressY();
 
@@ -417,9 +417,9 @@ namespace PuzzleGraphGenerator.Models
             graph.Position();
             graph.Rename();
 
-            graph.Sort(maxIterations: 10);
+            graph.Sort();
             graph.Swap(maxIterations: 10);
-            graph.Sort(maxIterations: 10, direction: -1);
+            graph.Sort(direction: -1);
 
             graph.DoCompressY();
 
