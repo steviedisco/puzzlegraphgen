@@ -61,8 +61,8 @@ namespace PuzzleGraphGenerator.Models
             var container = Create();
             var graph = container.CreateGraph(start);
 
-            graph.Position();
             graph.Rename();
+            graph.Position();            
 
             if (parameters.DoSort) graph.Sort();           
             if (parameters.DoSwap) graph.Swap(maxIterations: _maxIterations);

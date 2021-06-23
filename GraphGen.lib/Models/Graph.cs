@@ -114,7 +114,7 @@ namespace PuzzleGraphGenerator.Models
                     {
                         _plottedGoals[nextPuzzle.Id] = nextPuzzle;
 
-                        var keys = _plottedPositions.Keys.Where(f => f > y);
+                        var keys = _plottedPositions.Keys.Where(f => f == y + yStep);
 
                         foreach (var key in keys)
                         {
@@ -151,6 +151,7 @@ namespace PuzzleGraphGenerator.Models
             {
                 foreach (var node in _plottedGoals.Values)
                 {
+                    if (goal.Id == node.Id) continue;
                     if (nextPuzzle.Id == node.Id) continue;
 
                     if (IntersectCheckX(nextPuzzle, nextPuzzle.Position.x, node, direction))
@@ -168,7 +169,7 @@ namespace PuzzleGraphGenerator.Models
                     }
                 }
 
-                return graph.Sort(nextPuzzle, direction);
+                shifted |= graph.Sort(nextPuzzle, direction);
             }            
 
             return shifted;
