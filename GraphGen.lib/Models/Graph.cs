@@ -138,7 +138,15 @@ namespace PuzzleGraphGenerator.Models
             }            
         }
 
-        public static bool Sort(this Graph graph, PuzzleGoal goal = null, int direction = 1)
+        public static void Sort(this Graph graph, int direction = 1, int maxIterations = 10)
+        {
+            for (var i = 0; i < maxIterations; i++)
+            {
+                if (!graph.DoSort(direction: direction)) break;
+            }
+        }
+
+        public static bool DoSort(this Graph graph, PuzzleGoal goal = null, int direction = 1)
         {
             goal ??= graph.PuzzleStart;
 
@@ -149,27 +157,41 @@ namespace PuzzleGraphGenerator.Models
 
             foreach (var nextPuzzle in goal.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0))
             {
-                foreach (var node in _plottedGoals.Values)
+                foreach (var testPuzzle in _plottedGoals.Values)
                 {
-                    if (goal.Id == node.Id) continue;
-                    if (nextPuzzle.Id == node.Id) continue;
+                    if (goal.Id == testPuzzle.Id) continue;
+                    if (nextPuzzle.Id == testPuzzle.Id) continue;
 
-                    if (IntersectCheckX(nextPuzzle, nextPuzzle.Position.x, node, direction))
+                    if (IntersectCheckX(nextPuzzle, nextPuzzle.Position.x, testPuzzle, direction))
                     {
                         shifted = true;
                         graph.ShiftY(nextPuzzle);
                         break;
                     }
 
-                    if (IntersectCheckY(nextPuzzle, nextPuzzle.Position.y, node, direction))
+                    if (IntersectCheckX(nextPuzzle, nextPuzzle.Position.x, testPuzzle, direction, goal))
+                    {
+                        shifted = true;
+                        graph.ShiftY(goal);
+                        break;
+                    }
+
+                    if (IntersectCheckY(nextPuzzle, nextPuzzle.Position.y, testPuzzle, direction))
                     {
                         shifted = true;
                         graph.ShiftX(nextPuzzle, direction);
                         break;
                     }
+
+                    if (IntersectCheckY(nextPuzzle, nextPuzzle.Position.y, testPuzzle, direction, goal))
+                    {
+                        shifted = true;
+                        graph.ShiftX(goal, direction);
+                        break;
+                    }
                 }
 
-                shifted |= graph.Sort(nextPuzzle, direction);
+                shifted |= graph.DoSort(nextPuzzle, direction);
             }            
 
             return shifted;
@@ -484,46 +506,59 @@ namespace PuzzleGraphGenerator.Models
             while (true);
         }
 
-        private static bool IntersectCheckX(PuzzleGoal goal, int newX, PuzzleGoal node, int direction = 1)
+        private static bool IntersectCheckX(PuzzleGoal nextPuzzle, int newX, PuzzleGoal testPuzzle, int direction = 1, PuzzleGoal goal = null)
         {
-            bool intersects = (node.Position.x == newX &&
-                                                  node.Position.y == goal.Position.y);
+            bool intersects = (testPuzzle.Position.x == newX &&
+                               testPuzzle.Position.y == nextPuzzle.Position.y);
 
-            if (node.Result == null) return intersects;
+            if (testPuzzle.Result == null) return intersects;
 
-            intersects |= (node.Position.x == newX &&
-                          node.Position.y < goal.Position.y &&
-                          node.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0).Any(x => x.Position.x == newX && x.Position.y > goal.Position.y));
+            intersects |= (testPuzzle.Position.x == newX &&
+                          testPuzzle.Position.y < nextPuzzle.Position.y &&
+                          testPuzzle.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0).Any(x => x.Position.x == newX && x.Position.y > nextPuzzle.Position.y));
 
-            intersects |= (node.Position.y == goal.Position.y &&
-                          node.Position.x > goal.Position.x &&
-                          node.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0).Any(x => x.Position.x == newX && x.Position.y < goal.Position.y));
+            intersects |= (testPuzzle.Position.y == nextPuzzle.Position.y &&
+                          testPuzzle.Position.x > nextPuzzle.Position.x &&
+                          testPuzzle.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0).Any(x => x.Position.x == newX && x.Position.y < nextPuzzle.Position.y));
 
-            intersects |= (node.Position.x == newX &&
-                          node.Position.y < goal.Position.y &&
-                          node.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0).Any(x => x.Id != goal.Id && x.Position.y == goal.Position.y && (x.Position.x * direction) < (goal.Position.x * direction)));
+            intersects |= (testPuzzle.Position.x == newX &&
+                          testPuzzle.Position.y < nextPuzzle.Position.y &&
+                          testPuzzle.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0).Any(x => x.Id != nextPuzzle.Id && x.Position.y == nextPuzzle.Position.y && (x.Position.x * direction) < (nextPuzzle.Position.x * direction)));
+
+            intersects |= goal != null &&
+                         (goal.Position.x < newX &&
+                          goal.Position.y < nextPuzzle.Position.y &&
+                          testPuzzle.Position.y == goal.Position.y &&
+                          testPuzzle.Position.x <= nextPuzzle.Position.x &&
+                          testPuzzle.Position.x > goal.Position.x);
 
             return intersects;
         }
 
-        private static bool IntersectCheckY(PuzzleGoal goal, int newY, PuzzleGoal node, int direction = 1)
+        private static bool IntersectCheckY(PuzzleGoal nextPuzzle, int newY, PuzzleGoal testPuzzle, int direction = 1, PuzzleGoal goal = null)
         {
-            bool intersects = (node.Position.y == newY &&
-                                                  node.Position.x == goal.Position.x);
+            bool intersects = (testPuzzle.Position.y == newY &&
+                                                  testPuzzle.Position.x == nextPuzzle.Position.x);
 
-            if (node.Result == null) return intersects;
+            if (testPuzzle.Result == null) return intersects;
 
-            intersects |= (node.Position.y <= newY &&
-                        node.Position.x < goal.Position.x &&
-                        node.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0).Any(x => x.Position.y == newY && (x.Position.x * direction) > (goal.Position.x * direction)));
+            intersects |= (testPuzzle.Position.y <= newY &&
+                        testPuzzle.Position.x < nextPuzzle.Position.x &&
+                        testPuzzle.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0).Any(x => x.Position.y == newY && (x.Position.x * direction) > (nextPuzzle.Position.x * direction)));
 
-            intersects |= (node.Position.x == goal.Position.x &&
-                            node.Position.y < goal.Position.y &&
-                            node.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0).Any(x => x.Position.y == newY && (x.Position.x * direction) < (goal.Position.x * direction)));
+            intersects |= (testPuzzle.Position.x == nextPuzzle.Position.x &&
+                            testPuzzle.Position.y < nextPuzzle.Position.y &&
+                            testPuzzle.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0).Any(x => x.Position.y == newY && (x.Position.x * direction) < (nextPuzzle.Position.x * direction)));
 
-            intersects |= (node.Position.y == newY &&
-                            node.Position.x < goal.Position.x &&
-                            node.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0).Any(x => x.Position.y > newY && x.Position.x == goal.Position.x));
+            intersects |= (testPuzzle.Position.y == newY &&
+                            testPuzzle.Position.x < nextPuzzle.Position.x &&
+                            testPuzzle.Result.NextPuzzles.Where(x => (x.Position.x * direction) >= 0).Any(x => x.Position.y > newY && x.Position.x == nextPuzzle.Position.x));
+
+            intersects |= goal != null &&
+                         (goal.Position.y < testPuzzle.Position.y &&
+                          goal.Position.x > nextPuzzle.Position.x &&
+                          testPuzzle.Position.x == goal.Position.x &&
+                          testPuzzle.Position.y <= nextPuzzle.Position.y);
 
             return intersects;
         }

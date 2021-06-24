@@ -51,7 +51,7 @@
             <attribute key="label" type="String">Puzzle 9</attribute>
             <section name="graphics">
                 <attribute key="x" type="double">0</attribute>
-                <attribute key="y" type="double">300</attribute>
+                <attribute key="y" type="double">450</attribute>
                 <attribute key="w" type="double">150</attribute>
                 <attribute key="h" type="double">50</attribute>
                 <attribute key="type" type="String">roundrectangle</attribute>
@@ -71,7 +71,7 @@
             <attribute key="label" type="String">Puzzle 11</attribute>
             <section name="graphics">
                 <attribute key="x" type="double">0</attribute>
-                <attribute key="y" type="double">450</attribute>
+                <attribute key="y" type="double">600</attribute>
                 <attribute key="w" type="double">150</attribute>
                 <attribute key="h" type="double">50</attribute>
                 <attribute key="type" type="String">roundrectangle</attribute>
@@ -91,7 +91,7 @@
             <attribute key="label" type="String">Puzzle 12</attribute>
             <section name="graphics">
                 <attribute key="x" type="double">0</attribute>
-                <attribute key="y" type="double">600</attribute>
+                <attribute key="y" type="double">750</attribute>
                 <attribute key="w" type="double">150</attribute>
                 <attribute key="h" type="double">50</attribute>
                 <attribute key="type" type="String">roundrectangle</attribute>
@@ -111,7 +111,7 @@
             <attribute key="label" type="String">Puzzle 4</attribute>
             <section name="graphics">
                 <attribute key="x" type="double">0</attribute>
-                <attribute key="y" type="double">900</attribute>
+                <attribute key="y" type="double">1950</attribute>
                 <attribute key="w" type="double">150</attribute>
                 <attribute key="h" type="double">50</attribute>
                 <attribute key="type" type="String">roundrectangle</attribute>
@@ -131,7 +131,7 @@
             <attribute key="label" type="String">Puzzle 7</attribute>
             <section name="graphics">
                 <attribute key="x" type="double">0</attribute>
-                <attribute key="y" type="double">1050</attribute>
+                <attribute key="y" type="double">2100</attribute>
                 <attribute key="w" type="double">150</attribute>
                 <attribute key="h" type="double">50</attribute>
                 <attribute key="type" type="String">roundrectangle</attribute>
@@ -151,7 +151,7 @@
             <attribute key="label" type="String">Item 1</attribute>
             <section name="graphics">
                 <attribute key="x" type="double">0</attribute>
-                <attribute key="y" type="double">1125</attribute>
+                <attribute key="y" type="double">2175</attribute>
                 <attribute key="w" type="double">150</attribute>
                 <attribute key="h" type="double">25</attribute>
                 <attribute key="type" type="String">roundrectangle</attribute>
@@ -182,7 +182,7 @@
             <attribute key="label" type="String">Last Puzzle</attribute>
             <section name="graphics">
                 <attribute key="x" type="double">0</attribute>
-                <attribute key="y" type="double">1200</attribute>
+                <attribute key="y" type="double">2250</attribute>
                 <attribute key="w" type="double">150</attribute>
                 <attribute key="h" type="double">50</attribute>
                 <attribute key="type" type="String">roundrectangle</attribute>
@@ -202,7 +202,7 @@
             <attribute key="label" type="String">End Game</attribute>
             <section name="graphics">
                 <attribute key="x" type="double">0</attribute>
-                <attribute key="y" type="double">1200</attribute>
+                <attribute key="y" type="double">2250</attribute>
                 <attribute key="w" type="double">150</attribute>
                 <attribute key="h" type="double">50</attribute>
                 <attribute key="type" type="String">roundrectangle</attribute>
@@ -227,16 +227,16 @@
                 <section name="Line">
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">1200</attribute>
+                        <attribute key="y" type="double">2250</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">1200</attribute>
+                        <attribute key="y" type="double">2250</attribute>
                         <attribute key="nextId" type="int">2</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">1200</attribute>
+                        <attribute key="y" type="double">2250</attribute>
                     </section>
                 </section>
             </section>
@@ -251,16 +251,16 @@
                 <section name="Line">
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">1125</attribute>
+                        <attribute key="y" type="double">2175</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">1200</attribute>
+                        <attribute key="y" type="double">2250</attribute>
                         <attribute key="nextId" type="int">4</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">1200</attribute>
+                        <attribute key="y" type="double">2250</attribute>
                     </section>
                 </section>
             </section>
@@ -270,7 +270,7 @@
             <attribute key="label" type="String">Puzzle 6</attribute>
             <section name="graphics">
                 <attribute key="x" type="double">200</attribute>
-                <attribute key="y" type="double">1050</attribute>
+                <attribute key="y" type="double">2100</attribute>
                 <attribute key="w" type="double">150</attribute>
                 <attribute key="h" type="double">50</attribute>
                 <attribute key="type" type="String">roundrectangle</attribute>
@@ -290,7 +290,7 @@
             <attribute key="label" type="String">Item 2</attribute>
             <section name="graphics">
                 <attribute key="x" type="double">200</attribute>
-                <attribute key="y" type="double">1125</attribute>
+                <attribute key="y" type="double">2175</attribute>
                 <attribute key="w" type="double">150</attribute>
                 <attribute key="h" type="double">25</attribute>
                 <attribute key="type" type="String">roundrectangle</attribute>
@@ -326,16 +326,16 @@
                 <section name="Line">
                     <section name="point">
                         <attribute key="x" type="double">200</attribute>
-                        <attribute key="y" type="double">1125</attribute>
+                        <attribute key="y" type="double">2175</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">200</attribute>
-                        <attribute key="y" type="double">1200</attribute>
+                        <attribute key="y" type="double">2250</attribute>
                         <attribute key="nextId" type="int">4</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">1200</attribute>
+                        <attribute key="y" type="double">2250</attribute>
                     </section>
                 </section>
             </section>
@@ -345,7 +345,7 @@
             <attribute key="label" type="String">Puzzle 5</attribute>
             <section name="graphics">
                 <attribute key="x" type="double">400</attribute>
-                <attribute key="y" type="double">1050</attribute>
+                <attribute key="y" type="double">2100</attribute>
                 <attribute key="w" type="double">150</attribute>
                 <attribute key="h" type="double">50</attribute>
                 <attribute key="type" type="String">roundrectangle</attribute>
@@ -365,7 +365,7 @@
             <attribute key="label" type="String">Item 3</attribute>
             <section name="graphics">
                 <attribute key="x" type="double">400</attribute>
-                <attribute key="y" type="double">1125</attribute>
+                <attribute key="y" type="double">2175</attribute>
                 <attribute key="w" type="double">150</attribute>
                 <attribute key="h" type="double">25</attribute>
                 <attribute key="type" type="String">roundrectangle</attribute>
@@ -401,16 +401,16 @@
                 <section name="Line">
                     <section name="point">
                         <attribute key="x" type="double">400</attribute>
-                        <attribute key="y" type="double">1125</attribute>
+                        <attribute key="y" type="double">2175</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">400</attribute>
-                        <attribute key="y" type="double">1200</attribute>
+                        <attribute key="y" type="double">2250</attribute>
                         <attribute key="nextId" type="int">4</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">1200</attribute>
+                        <attribute key="y" type="double">2250</attribute>
                     </section>
                 </section>
             </section>
@@ -425,16 +425,16 @@
                 <section name="Line">
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">900</attribute>
+                        <attribute key="y" type="double">1950</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">400</attribute>
-                        <attribute key="y" type="double">900</attribute>
+                        <attribute key="y" type="double">1950</attribute>
                         <attribute key="nextId" type="int">10</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">400</attribute>
-                        <attribute key="y" type="double">1050</attribute>
+                        <attribute key="y" type="double">2100</attribute>
                     </section>
                 </section>
             </section>
@@ -449,16 +449,16 @@
                 <section name="Line">
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">900</attribute>
+                        <attribute key="y" type="double">1950</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">200</attribute>
-                        <attribute key="y" type="double">900</attribute>
+                        <attribute key="y" type="double">1950</attribute>
                         <attribute key="nextId" type="int">8</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">200</attribute>
-                        <attribute key="y" type="double">1050</attribute>
+                        <attribute key="y" type="double">2100</attribute>
                     </section>
                 </section>
             </section>
@@ -473,16 +473,16 @@
                 <section name="Line">
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">900</attribute>
+                        <attribute key="y" type="double">1950</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">1050</attribute>
+                        <attribute key="y" type="double">2100</attribute>
                         <attribute key="nextId" type="int">6</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">1050</attribute>
+                        <attribute key="y" type="double">2100</attribute>
                     </section>
                 </section>
             </section>
@@ -497,16 +497,16 @@
                 <section name="Line">
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">600</attribute>
+                        <attribute key="y" type="double">750</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">900</attribute>
+                        <attribute key="y" type="double">1950</attribute>
                         <attribute key="nextId" type="int">12</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">900</attribute>
+                        <attribute key="y" type="double">1950</attribute>
                     </section>
                 </section>
             </section>
@@ -521,16 +521,16 @@
                 <section name="Line">
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">450</attribute>
+                        <attribute key="y" type="double">600</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">600</attribute>
+                        <attribute key="y" type="double">750</attribute>
                         <attribute key="nextId" type="int">14</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">600</attribute>
+                        <attribute key="y" type="double">750</attribute>
                     </section>
                 </section>
             </section>
@@ -539,8 +539,8 @@
             <attribute key="id" type="int">22</attribute>
             <attribute key="label" type="String">Puzzle 2</attribute>
             <section name="graphics">
-                <attribute key="x" type="double">400</attribute>
-                <attribute key="y" type="double">450</attribute>
+                <attribute key="x" type="double">200</attribute>
+                <attribute key="y" type="double">750</attribute>
                 <attribute key="w" type="double">150</attribute>
                 <attribute key="h" type="double">50</attribute>
                 <attribute key="type" type="String">roundrectangle</attribute>
@@ -560,7 +560,7 @@
             <attribute key="label" type="String">Puzzle 8</attribute>
             <section name="graphics">
                 <attribute key="x" type="double">200</attribute>
-                <attribute key="y" type="double">600</attribute>
+                <attribute key="y" type="double">1200</attribute>
                 <attribute key="w" type="double">150</attribute>
                 <attribute key="h" type="double">50</attribute>
                 <attribute key="type" type="String">roundrectangle</attribute>
@@ -585,16 +585,16 @@
                 <section name="Line">
                     <section name="point">
                         <attribute key="x" type="double">200</attribute>
-                        <attribute key="y" type="double">600</attribute>
+                        <attribute key="y" type="double">1200</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">200</attribute>
-                        <attribute key="y" type="double">900</attribute>
+                        <attribute key="y" type="double">1950</attribute>
                         <attribute key="nextId" type="int">12</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">900</attribute>
+                        <attribute key="y" type="double">1950</attribute>
                     </section>
                 </section>
             </section>
@@ -604,7 +604,7 @@
             <attribute key="label" type="String">Puzzle 3</attribute>
             <section name="graphics">
                 <attribute key="x" type="double">400</attribute>
-                <attribute key="y" type="double">750</attribute>
+                <attribute key="y" type="double">1050</attribute>
                 <attribute key="w" type="double">150</attribute>
                 <attribute key="h" type="double">50</attribute>
                 <attribute key="type" type="String">roundrectangle</attribute>
@@ -629,16 +629,16 @@
                 <section name="Line">
                     <section name="point">
                         <attribute key="x" type="double">400</attribute>
-                        <attribute key="y" type="double">750</attribute>
+                        <attribute key="y" type="double">1050</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">400</attribute>
-                        <attribute key="y" type="double">900</attribute>
+                        <attribute key="y" type="double">1950</attribute>
                         <attribute key="nextId" type="int">12</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">900</attribute>
+                        <attribute key="y" type="double">1950</attribute>
                     </section>
                 </section>
             </section>
@@ -652,8 +652,8 @@
                 <attribute key="targetArrow" type="String">standard</attribute>
                 <section name="Line">
                     <section name="point">
-                        <attribute key="x" type="double">400</attribute>
-                        <attribute key="y" type="double">450</attribute>
+                        <attribute key="x" type="double">200</attribute>
+                        <attribute key="y" type="double">750</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">400</attribute>
@@ -662,7 +662,7 @@
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">400</attribute>
-                        <attribute key="y" type="double">750</attribute>
+                        <attribute key="y" type="double">1050</attribute>
                     </section>
                 </section>
             </section>
@@ -676,17 +676,17 @@
                 <attribute key="targetArrow" type="String">standard</attribute>
                 <section name="Line">
                     <section name="point">
-                        <attribute key="x" type="double">400</attribute>
-                        <attribute key="y" type="double">450</attribute>
+                        <attribute key="x" type="double">200</attribute>
+                        <attribute key="y" type="double">750</attribute>
                     </section>
                     <section name="point">
-                        <attribute key="x" type="double">400</attribute>
-                        <attribute key="y" type="double">600</attribute>
+                        <attribute key="x" type="double">200</attribute>
+                        <attribute key="y" type="double">1200</attribute>
                         <attribute key="nextId" type="int">16</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">200</attribute>
-                        <attribute key="y" type="double">600</attribute>
+                        <attribute key="y" type="double">1200</attribute>
                     </section>
                 </section>
             </section>
@@ -696,7 +696,7 @@
             <attribute key="label" type="String">Puzzle 10</attribute>
             <section name="graphics">
                 <attribute key="x" type="double">600</attribute>
-                <attribute key="y" type="double">450</attribute>
+                <attribute key="y" type="double">600</attribute>
                 <attribute key="w" type="double">150</attribute>
                 <attribute key="h" type="double">50</attribute>
                 <attribute key="type" type="String">roundrectangle</attribute>
@@ -721,16 +721,16 @@
                 <section name="Line">
                     <section name="point">
                         <attribute key="x" type="double">600</attribute>
-                        <attribute key="y" type="double">450</attribute>
+                        <attribute key="y" type="double">600</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">600</attribute>
-                        <attribute key="y" type="double">600</attribute>
+                        <attribute key="y" type="double">1200</attribute>
                         <attribute key="nextId" type="int">16</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">200</attribute>
-                        <attribute key="y" type="double">600</attribute>
+                        <attribute key="y" type="double">1200</attribute>
                     </section>
                 </section>
             </section>
@@ -745,16 +745,16 @@
                 <section name="Line">
                     <section name="point">
                         <attribute key="x" type="double">600</attribute>
-                        <attribute key="y" type="double">450</attribute>
+                        <attribute key="y" type="double">600</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">600</attribute>
-                        <attribute key="y" type="double">600</attribute>
+                        <attribute key="y" type="double">1200</attribute>
                         <attribute key="nextId" type="int">16</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">200</attribute>
-                        <attribute key="y" type="double">600</attribute>
+                        <attribute key="y" type="double">1200</attribute>
                     </section>
                 </section>
             </section>
@@ -769,16 +769,16 @@
                 <section name="Line">
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">300</attribute>
-                    </section>
-                    <section name="point">
-                        <attribute key="x" type="double">600</attribute>
-                        <attribute key="y" type="double">300</attribute>
-                        <attribute key="nextId" type="int">24</attribute>
+                        <attribute key="y" type="double">450</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">600</attribute>
                         <attribute key="y" type="double">450</attribute>
+                        <attribute key="nextId" type="int">24</attribute>
+                    </section>
+                    <section name="point">
+                        <attribute key="x" type="double">600</attribute>
+                        <attribute key="y" type="double">600</attribute>
                     </section>
                 </section>
             </section>
@@ -793,16 +793,16 @@
                 <section name="Line">
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">300</attribute>
+                        <attribute key="y" type="double">450</attribute>
                     </section>
                     <section name="point">
-                        <attribute key="x" type="double">400</attribute>
-                        <attribute key="y" type="double">300</attribute>
+                        <attribute key="x" type="double">200</attribute>
+                        <attribute key="y" type="double">450</attribute>
                         <attribute key="nextId" type="int">22</attribute>
                     </section>
                     <section name="point">
-                        <attribute key="x" type="double">400</attribute>
-                        <attribute key="y" type="double">450</attribute>
+                        <attribute key="x" type="double">200</attribute>
+                        <attribute key="y" type="double">750</attribute>
                     </section>
                 </section>
             </section>
@@ -817,16 +817,16 @@
                 <section name="Line">
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">300</attribute>
+                        <attribute key="y" type="double">450</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">450</attribute>
+                        <attribute key="y" type="double">600</attribute>
                         <attribute key="nextId" type="int">20</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">450</attribute>
+                        <attribute key="y" type="double">600</attribute>
                     </section>
                 </section>
             </section>
@@ -835,7 +835,7 @@
             <attribute key="id" type="int">28</attribute>
             <attribute key="label" type="String">Puzzle 1</attribute>
             <section name="graphics">
-                <attribute key="x" type="double">400</attribute>
+                <attribute key="x" type="double">200</attribute>
                 <attribute key="y" type="double">300</attribute>
                 <attribute key="w" type="double">150</attribute>
                 <attribute key="h" type="double">50</attribute>
@@ -860,17 +860,17 @@
                 <attribute key="targetArrow" type="String">standard</attribute>
                 <section name="Line">
                     <section name="point">
-                        <attribute key="x" type="double">400</attribute>
+                        <attribute key="x" type="double">200</attribute>
                         <attribute key="y" type="double">300</attribute>
                     </section>
                     <section name="point">
-                        <attribute key="x" type="double">400</attribute>
-                        <attribute key="y" type="double">450</attribute>
+                        <attribute key="x" type="double">200</attribute>
+                        <attribute key="y" type="double">750</attribute>
                         <attribute key="nextId" type="int">22</attribute>
                     </section>
                     <section name="point">
-                        <attribute key="x" type="double">400</attribute>
-                        <attribute key="y" type="double">450</attribute>
+                        <attribute key="x" type="double">200</attribute>
+                        <attribute key="y" type="double">750</attribute>
                     </section>
                 </section>
             </section>
@@ -888,12 +888,12 @@
                         <attribute key="y" type="double">150</attribute>
                     </section>
                     <section name="point">
-                        <attribute key="x" type="double">400</attribute>
+                        <attribute key="x" type="double">200</attribute>
                         <attribute key="y" type="double">150</attribute>
                         <attribute key="nextId" type="int">28</attribute>
                     </section>
                     <section name="point">
-                        <attribute key="x" type="double">400</attribute>
+                        <attribute key="x" type="double">200</attribute>
                         <attribute key="y" type="double">300</attribute>
                     </section>
                 </section>
@@ -913,12 +913,12 @@
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">300</attribute>
+                        <attribute key="y" type="double">450</attribute>
                         <attribute key="nextId" type="int">26</attribute>
                     </section>
                     <section name="point">
                         <attribute key="x" type="double">0</attribute>
-                        <attribute key="y" type="double">300</attribute>
+                        <attribute key="y" type="double">450</attribute>
                     </section>
                 </section>
             </section>
